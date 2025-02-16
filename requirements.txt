@@ -1,0 +1,3 @@
+opik[proxy]
+python-dotenv
+pyyaml 
