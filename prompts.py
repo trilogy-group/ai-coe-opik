@@ -69,32 +69,67 @@ GEVAL_CRITERIA = """Please evaluate the summary based on the following criteria:
 
 Total score will be the average of all criteria (0-5 scale)."""
 
+# Different prompt variations for QA
+QA_PROMPTS = [
+    """Context: {{context}}
+
+Question: {{question}}
+
+Please provide a clear and concise answer.""",
+
+    """You are an AI engineering expert. Using the following context:
+{{context}}
+
+Answer this question: {{question}}""",
+
+    """Based on this technical context:
+{{context}}
+
+Provide a technical answer to: {{question}}
+Focus on accuracy and clarity."""
+]
+
+# Different prompt variations for summarization
+SUMMARY_PROMPTS = [
+    """Please provide a concise summary of the following text about AI engineering:
+
+{{text}}
+
+Summarize the key technical concepts while maintaining accuracy.""",
+
+    """As an AI engineering expert, create a brief technical summary of:
+
+{{text}}
+
+Focus on the core concepts and their relationships.""",
+
+    """Analyze and summarize this AI engineering text:
+
+{{text}}
+
+Provide a concise summary that captures the main technical points and their significance."""
+]
+
 def get_prompts():
     """Get or create versioned prompts in Opik library."""
     
-    # Create prompts for Q&A evaluation
+    # Create QA prompt variations
     qa_prompts = []
-    for sample in AI_ENGINEERING_SAMPLES:
+    for idx, prompt_template in enumerate(QA_PROMPTS):
+        # Create one prompt per template version
         prompt = opik.Prompt(
-            name=f"ai-engineering-qa-{len(qa_prompts)+1}",
-            prompt=f"""Context: {sample['context']}
-
-Question: {sample['question']}
-
-Expected Answer: {sample['expected_output']}"""
+            name=f"ai-engineering-qa-v{idx+1}",
+            prompt=prompt_template
         )
         qa_prompts.append(prompt)
 
-    # Create prompts for summarization tasks
+    # Create summary prompt variations
     summary_prompts = []
-    for idx, sample in enumerate(AI_ENGINEERING_VERBOSE):
+    for idx, prompt_template in enumerate(SUMMARY_PROMPTS):
+        # Create one prompt per template version
         prompt = opik.Prompt(
-            name=f"ai-engineering-summary-{idx+1}",
-            prompt=f"""Please provide a concise summary of the following text about AI engineering:
-
-{sample['text']}
-
-Summarize the key technical concepts while maintaining accuracy."""
+            name=f"ai-engineering-summary-v{idx+1}",
+            prompt=prompt_template
         )
         summary_prompts.append(prompt)
     

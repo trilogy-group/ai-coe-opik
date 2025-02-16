@@ -8,7 +8,10 @@ from concurrent.futures import ThreadPoolExecutor
 from typing import List, Dict
 import time
 import argparse
-from prompts import get_prompts, AI_ENGINEERING_SAMPLES, GEVAL_TASK_INTRO, GEVAL_CRITERIA
+from prompts import get_prompts, AI_ENGINEERING_SAMPLES, GEVAL_TASK_INTRO, GEVAL_CRITERIA, AI_ENGINEERING_VERBOSE
+from functools import wraps
+from litellm.exceptions import RateLimitError
+import random
 
 # Load environment variables
 load_dotenv()
@@ -17,6 +20,12 @@ def parse_args():
     """Parse command line arguments."""
     parser = argparse.ArgumentParser(description='Run model evaluations')
     parser.add_argument('--name', '-n', required=True, help='Experiment set name')
+    parser.add_argument('--type', '-t', choices=['prompts', 'models'], required=True, 
+                      help='Type of experiment: compare prompts or models')
+    parser.add_argument('--model', '-m', default='gpt-4o-mini',
+                      help='Model to use for prompt comparison (default: gpt-4o-mini)')
+    parser.add_argument('--prompt-version', '-p', default='1',
+                      help='Prompt version to use for model comparison (default: 1)')
     return parser.parse_args()
 
 def load_config() -> Dict:
@@ -24,6 +33,35 @@ def load_config() -> Dict:
     with open('config.yaml', 'r') as file:
         return yaml.safe_load(file)
 
+def retry_on_rate_limit(max_retries=3):
+    """Decorator to retry function on rate limit errors."""
+    def decorator(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            retries = 0
+            while retries < max_retries:
+                try:
+                    return func(*args, **kwargs)
+                except RateLimitError as e:
+                    retries += 1
+                    if retries == max_retries:
+                        raise e
+                    
+                    # Extract wait time from error message
+                    try:
+                        import re
+                        time_match = re.search(r'try again in (\d+\.?\d*)s', str(e))
+                        wait_time = float(time_match.group(1)) if time_match else 1
+                    except:
+                        wait_time = 1
+                    
+                    print(f"\nRate limit reached. Retrying in {wait_time:.2f} seconds... (Attempt {retries}/{max_retries})")
+                    time.sleep(wait_time)
+            return func(*args, **kwargs)
+        return wrapper
+    return decorator
+
+@retry_on_rate_limit()
 def evaluate_model(model: str, dataset: opik.Dataset, prompt: opik.Prompt, metrics: List, exp_name: str) -> Dict:
     """Evaluate a single model."""
     try:
@@ -43,14 +81,17 @@ def evaluate_model(model: str, dataset: opik.Dataset, prompt: opik.Prompt, metri
             messages=messages,
             model=model,
             scoring_metrics=metrics,
-            experiment_name=exp_name
+            experiment_name=exp_name,
+            project_name="POC",
+            prompt=prompt
         )
         
         duration = time.time() - start_time
         return {
             "model": model,
             "result": result,
-            "duration": duration
+            "duration": duration,
+            "prompt_name": prompt.name
         }
     except Exception as e:
         print(f"Error evaluating model {model}: {str(e)}")
@@ -59,9 +100,51 @@ def evaluate_model(model: str, dataset: opik.Dataset, prompt: opik.Prompt, metri
             "error": str(e)
         }
 
+def evaluate_prompt_versions(dataset, prompts, metrics, model, exp_name, task_type):
+    """Evaluate different prompt versions using a single model."""
+    results = []
+    print(f"\nEvaluating prompt versions using model: {model}")
+    
+    for prompt in prompts:
+        result = evaluate_model(
+            model, 
+            dataset, 
+            prompt,
+            metrics,
+            f"{exp_name}-{task_type}-prompt-v{prompt.name.split('-v')[1]}"
+        )
+        results.append(result)
+    
+    return results
+
+def evaluate_models(dataset, prompt, metrics, models, exp_name, task_type):
+    """Evaluate different models using a single prompt."""
+    results = []
+    print(f"\nEvaluating models using prompt version: {prompt.name}")
+    
+    for model in models:
+        result = evaluate_model(
+            model, 
+            dataset, 
+            prompt,
+            metrics,
+            f"{exp_name}-{task_type}-model-{model}"
+        )
+        results.append(result)
+    
+    return results
+
 def main():
     # Parse command line arguments
-    args = parse_args()
+    parser = argparse.ArgumentParser(description='Run model evaluations')
+    parser.add_argument('--name', '-n', required=True, help='Experiment set name')
+    parser.add_argument('--type', '-t', choices=['prompts', 'models'], required=True, 
+                      help='Type of experiment: compare prompts or models')
+    parser.add_argument('--model', '-m', default='gpt-4o-mini',
+                      help='Model to use for prompt comparison (default: gpt-4o-mini)')
+    parser.add_argument('--prompt-version', '-p', default='1',
+                      help='Prompt version to use for model comparison (default: 1)')
+    args = parser.parse_args()
     
     # Load configuration
     config = load_config()
@@ -79,23 +162,21 @@ def main():
     summary_dataset = opik_client.get_or_create_dataset("AI Engineering Summary Dataset")
 
     # Convert QA prompts to dataset format
-    qa_samples = [
-        {
-            "question": prompt.prompt.split("Question: ")[1].split("\n")[0],
-            "expected_output": prompt.prompt.split("Expected Answer: ")[1],
-            "context": prompt.prompt.split("Context: ")[1].split("\n")[0]
-        }
-        for prompt in qa_prompts
-    ]
+    qa_samples = []
+    for sample in AI_ENGINEERING_SAMPLES:  # Use original samples instead of prompts
+        qa_samples.append({
+            "question": sample["question"],
+            "expected_output": sample["expected_output"],
+            "context": sample["context"]
+        })
 
     # Convert summary prompts to dataset format
-    summary_samples = [
-        {
-            "text": prompt.prompt.split("text about AI engineering:\n\n")[1].split("\n\nSummarize")[0],
+    summary_samples = []
+    for sample in AI_ENGINEERING_VERBOSE:  # Use original verbose texts
+        summary_samples.append({
+            "text": sample["text"],
             "task": "summarize"
-        }
-        for prompt in summary_prompts
-    ]
+        })
 
     # Insert samples into datasets
     qa_dataset.insert(qa_samples)
@@ -117,36 +198,73 @@ def main():
     # Get models from config
     models = [model['name'] for model in config['models']]
 
-    # Run parallel evaluations for both QA and summarization
-    print("\nStarting parallel model evaluations...")
-    with ThreadPoolExecutor() as executor:
-        # QA evaluations
-        qa_futures = [
-            executor.submit(evaluate_model, model, qa_dataset, qa_prompts[0], 
-                          [m for m in metrics if not isinstance(m, GEval)], 
-                          f"{args.name}-qa-{model}")
-            for model in models
-        ]
+    # Run evaluations based on experiment type
+    print(f"\nRunning {args.type} comparison experiment...")
+    
+    if args.type == 'prompts':
+        # Compare prompt versions using specified model
+        print(f"\nComparing prompt versions using model: {args.model}")
         
-        # Summarization evaluations
-        summary_futures = [
-            executor.submit(evaluate_model, model, summary_dataset, summary_prompts[0],
-                          [m for m in metrics if isinstance(m, GEval)],
-                          f"{args.name}-summary-{model}")
-            for model in models
-        ]
+        qa_results = evaluate_prompt_versions(
+            qa_dataset, qa_prompts, 
+            [m for m in metrics if not isinstance(m, GEval)],
+            args.model, args.name, "qa"
+        )
         
-        all_results = [future.result() for future in qa_futures + summary_futures]
+        summary_results = evaluate_prompt_versions(
+            summary_dataset, summary_prompts,
+            [m for m in metrics if isinstance(m, GEval)],
+            args.model, args.name, "summary"
+        )
+    else:
+        # Compare models using specified prompt version
+        print(f"\nComparing models using prompt version: {args.prompt_version}")
+        
+        # Get the specified prompt version for each task
+        qa_prompt = next(p for p in qa_prompts 
+                        if p.name.endswith(f"-v{args.prompt_version}"))
+        summary_prompt = next(p for p in summary_prompts 
+                            if p.name.endswith(f"-v{args.prompt_version}"))
+        
+        qa_results = evaluate_models(
+            qa_dataset, qa_prompt,
+            [m for m in metrics if not isinstance(m, GEval)],
+            models, args.name, "qa"
+        )
+        
+        summary_results = evaluate_models(
+            summary_dataset, summary_prompt,
+            [m for m in metrics if isinstance(m, GEval)],
+            models, args.name, "summary"
+        )
 
-    # Print comparative results
-    print("\nComparative Results:")
-    print("===================")
-    for result in all_results:
+    # Print results
+    print("\nResults:")
+    print("========")
+    
+    if args.type == 'prompts':
+        print(f"\nPrompt comparison using model: {args.model}")
+    else:
+        print(f"\nModel comparison using prompt version: {args.prompt_version}")
+    
+    print("\nQA Task Results:")
+    for result in qa_results:
         if "error" in result:
             print(f"\nModel: {result['model']}")
             print(f"Error: {result['error']}")
         else:
             print(f"\nModel: {result['model']}")
+            print(f"Prompt: {result['prompt_name']}")
+            print(f"Duration: {result['duration']:.2f} seconds")
+    
+    print("\nSummarization Task Results:")
+    for result in summary_results:
+        if "error" in result:
+            print(f"\nModel: {result['model']}")
+            print(f"Error: {result['error']}")
+        else:
+            print(f"\nModel: {result['model']}")
+            print(f"Prompt: {result['prompt_name']}")
             print(f"Duration: {result['duration']:.2f} seconds")
 
 if __name__ == "__main__":

@@ -18,30 +18,56 @@ OPIK_API_KEY=your_api_key_here
 
 ## Usage
 
-Run the evaluation with:
+The POC supports two types of experiments:
+
+### 1. Compare Prompt Versions
+
+Evaluate different prompt versions using a specific model:
 ```bash
-python main.py -n <experiment_name>
+python main.py -n <experiment_name> -t prompts [-m <model_name>]
 ```
 
-For example:
+Example:
 ```bash
-python main.py -n ai_eng_eval_1
+python main.py -n prompt_eval_1 -t prompts -m gpt-4o-mini
 ```
 
-The script will:
-1. Load model configurations from config.yaml
-2. Create versioned prompts from AI Engineering evaluation samples
-3. Run parallel evaluations for each configured model
-4. Display comparative results for all models
+This will:
+- Use the specified model (defaults to gpt-4o-mini)
+- Evaluate all prompt versions
+- Compare performance across different prompt designs
+- Log results to the "POC" project in Opik
+
+### 2. Compare Models
+
+Evaluate different models using a specific prompt version:
+```bash
+python main.py -n <experiment_name> -t models [-p <prompt_version>]
+```
+
+Example:
+```bash
+python main.py -n model_eval_1 -t models -p 1
+```
+
+This will:
+- Use the specified prompt version (defaults to version 1)
+- Evaluate all configured models
+- Compare model performance
+- Log results to the "POC" project in Opik
 
 ## Features
 
-- Parallel model evaluation
+- Parallel model evaluation with rate limiting protection
 - Configurable models and metrics
 - Versioned prompts using Opik Prompt Library
 - AI Engineering focused evaluation dataset
-- Multiple evaluation metrics
+- Multiple evaluation metrics:
+  - Hallucination detection
+  - Answer relevance scoring
+  - G-Eval summary quality assessment
 - Comparative performance analysis
+- Automatic retry with backoff for rate limits
 
 ## Evaluation Dataset
 
@@ -51,6 +77,13 @@ The evaluation covers key AI Engineering topics:
 - GraphRAG architecture
 - LLM performance evaluation
 - Multimodal model processing
+
+## Prompt Versions
+
+The POC includes multiple prompt versions for each task:
+1. Basic prompt with clear structure
+2. Expert-focused prompt with technical context
+3. Detailed prompt with accuracy emphasis
 
 ## Documentation
 
