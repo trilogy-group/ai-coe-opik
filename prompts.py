@@ -7,7 +7,7 @@ Question: {{question}}
 
 Answer: Let me help you with that."""
 
-# Define sample data
+# Define sample data for Q&A evaluation
 AI_ENGINEERING_SAMPLES = [
     {
         "question": "What is reasoning distillation and how does it improve LLM performance?",
@@ -36,23 +36,69 @@ AI_ENGINEERING_SAMPLES = [
     }
 ]
 
-# Create versioned prompts
+# Verbose paragraphs for summarization tasks
+AI_ENGINEERING_VERBOSE = [
+    {
+        "text": """The implementation of reasoning distillation in large language models represents a significant advancement in AI model optimization. This technique involves a complex process where the cognitive patterns and decision-making pathways of large, computationally intensive models are systematically analyzed, decomposed, and transferred to more compact model architectures. The process begins with a careful analysis of how larger models break down complex problems into smaller, manageable steps, including the identification of key reasoning patterns, logical connections, and problem-solving strategies. These patterns are then extracted and codified into a format that can be used to train smaller, more efficient models. The distillation process involves multiple stages of training, where the student model learns not just the final outputs but also the intermediate reasoning steps that lead to those outputs. This approach has shown remarkable results in preserving up to 90% of the original model's reasoning capabilities while significantly reducing the computational footprint, making it possible to deploy sophisticated AI reasoning systems in resource-constrained environments. The technique has particularly profound implications for edge computing and mobile AI applications, where computational resources are limited but the demand for sophisticated reasoning capabilities remains high."""
+    },
+    {
+        "text": """GraphRAG architecture represents a sophisticated fusion of graph-based knowledge representation and retrieval-augmented generation, fundamentally transforming how AI systems access and utilize information. The architecture integrates multiple specialized components that work in concert: a dynamic knowledge graph that maintains complex relationships between entities and concepts, an advanced retrieval system that leverages graph traversal algorithms to identify relevant information paths, and a context-aware generation mechanism that incorporates both local and global graph structures. The system employs bidirectional attention mechanisms to navigate the knowledge graph during the retrieval phase, considering both forward and backward relationships between nodes to construct comprehensive context representations. The generation component utilizes a novel graph-conditioned decoder that can attend to both the retrieved graph structures and the input query, enabling it to generate responses that reflect a deeper understanding of the interconnected nature of the information. This architectural approach significantly improves the system's ability to maintain consistency across long-range dependencies and complex reasoning chains, while also enabling more nuanced and contextually appropriate responses to complex queries."""
+    }
+]
+
+# G-Eval configuration
+GEVAL_TASK_INTRO = """You are an expert evaluator assessing the quality of AI-generated summaries. You will evaluate how well a summary captures the key technical concepts from a detailed AI engineering text while maintaining accuracy and conciseness."""
+
+GEVAL_CRITERIA = """Please evaluate the summary based on the following criteria:
+
+1. Technical Accuracy (0-5):
+- Does the summary maintain technical accuracy of the original concepts?
+- Are there any factual errors or misrepresentations?
+
+2. Completeness (0-5):
+- Are all key technical concepts from the original text included?
+- Is any critical information missing?
+
+3. Conciseness (0-5):
+- Is the summary appropriately brief while maintaining substance?
+- Does it avoid unnecessary details while preserving core concepts?
+
+4. Clarity (0-5):
+- Is the summary clear and well-structured?
+- Are complex concepts presented in an understandable way?
+
+Total score will be the average of all criteria (0-5 scale)."""
+
 def get_prompts():
     """Get or create versioned prompts in Opik library."""
     
-    # Create prompts from samples
-    prompts = []
+    # Create prompts for Q&A evaluation
+    qa_prompts = []
     for sample in AI_ENGINEERING_SAMPLES:
         prompt = opik.Prompt(
-            name=f"ai-engineering-{len(prompts)+1}",
+            name=f"ai-engineering-qa-{len(qa_prompts)+1}",
             prompt=f"""Context: {sample['context']}
 
 Question: {sample['question']}
 
 Expected Answer: {sample['expected_output']}"""
         )
-        prompts.append(prompt)
+        qa_prompts.append(prompt)
+
+    # Create prompts for summarization tasks
+    summary_prompts = []
+    for idx, sample in enumerate(AI_ENGINEERING_VERBOSE):
+        prompt = opik.Prompt(
+            name=f"ai-engineering-summary-{idx+1}",
+            prompt=f"""Please provide a concise summary of the following text about AI engineering:
+
+{sample['text']}
+
+Summarize the key technical concepts while maintaining accuracy."""
+        )
+        summary_prompts.append(prompt)
     
     return {
-        "ai_engineering": prompts
+        "ai_engineering": qa_prompts,
+        "summarization": summary_prompts
     } 
