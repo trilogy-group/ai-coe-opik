@@ -1,4 +1,5 @@
 import opik
+from typing import Dict, List, Any
 
 # Define prompt templates
 AI_ENGINEERING_PROMPT = """Context: {{context}}
@@ -7,33 +8,39 @@ Question: {{question}}
 
 Answer: Let me help you with that."""
 
+# Import datasets from the datasets module
+from datasets import QA_SAMPLES as AI_ENGINEERING_SAMPLES
+from datasets import SUMMARIZATION_SAMPLES as AI_ENGINEERING_VERBOSE
+from datasets import CODE_SAMPLES, CHAT_SAMPLES
+
+# For backward compatibility (these will be removed in a future version)
 # Define sample data for Q&A evaluation
-AI_ENGINEERING_SAMPLES = [
+_AI_ENGINEERING_SAMPLES = [
     {
         "question": "What is reasoning distillation and how does it improve LLM performance?",
         "expected_output": "Reasoning distillation is a technique that extracts and transfers reasoning patterns from large language models to smaller ones, improving their performance while reducing size. This is done by training smaller models to mimic the step-by-step reasoning process of larger models.",
-        "context": "Reasoning distillation is an emerging technique in AI that focuses on transferring complex reasoning capabilities from large language models to more efficient smaller models. The process involves analyzing and extracting reasoning patterns from teacher models and training student models to replicate these patterns."
+        "context": "Reasoning distillation is an emerging technique in AI that focuses on transferring complex reasoning capabilities from large language models to more efficient smaller models. The process involves analyzing and extracting reasoning patterns from teacher models and training student models to replicate these patterns.",
     },
     {
         "question": "How does inference-time scaling work with LLMs?",
         "expected_output": "Inference-time scaling allows dynamic adjustment of model parameters and compute resources based on input complexity. This enables efficient resource utilization by scaling up for complex queries and down for simpler ones.",
-        "context": "Inference-time scaling is an optimization technique that dynamically adjusts model complexity and computational resources during inference. It enables more efficient resource usage by matching model capacity to input complexity, rather than using full resources for every query."
+        "context": "Inference-time scaling is an optimization technique that dynamically adjusts model complexity and computational resources during inference. It enables more efficient resource usage by matching model capacity to input complexity, rather than using full resources for every query.",
     },
     {
         "question": "What are the key components of GraphRAG and its benefits?",
         "expected_output": "GraphRAG combines graph-based knowledge representation with retrieval-augmented generation. Key components include a knowledge graph, retrieval mechanism, and graph-aware generation. Benefits include improved context understanding and more accurate responses.",
-        "context": "GraphRAG is an advanced architecture that integrates graph-based knowledge representation with retrieval-augmented generation. It uses knowledge graphs to structure information and enhance the retrieval and generation process, leading to more contextually aware and accurate responses."
+        "context": "GraphRAG is an advanced architecture that integrates graph-based knowledge representation with retrieval-augmented generation. It uses knowledge graphs to structure information and enhance the retrieval and generation process, leading to more contextually aware and accurate responses.",
     },
     {
         "question": "What are effective strategies for evaluating LLM performance?",
         "expected_output": "Effective LLM evaluation strategies include benchmarking against human performance, using automated metrics for consistency and accuracy, conducting behavioral testing, and implementing comparative evaluations across different models and tasks.",
-        "context": "LLM evaluation requires a multi-faceted approach combining quantitative metrics, qualitative assessment, and systematic testing. This includes automated evaluation metrics, human evaluation protocols, and comprehensive testing frameworks for assessing model capabilities and limitations."
+        "context": "LLM evaluation requires a multi-faceted approach combining quantitative metrics, qualitative assessment, and systematic testing. This includes automated evaluation metrics, human evaluation protocols, and comprehensive testing frameworks for assessing model capabilities and limitations.",
     },
     {
         "question": "How do multimodal models process different types of input data?",
         "expected_output": "Multimodal models use specialized encoders for each input type (text, images, audio, etc.), followed by cross-modal fusion mechanisms to create unified representations. This enables understanding relationships between different modalities for comprehensive analysis.",
-        "context": "Multimodal models are designed to process and understand multiple types of input data simultaneously. They employ specialized encoding architectures for different modalities, cross-modal attention mechanisms, and fusion techniques to integrate information from various sources effectively."
-    }
+        "context": "Multimodal models are designed to process and understand multiple types of input data simultaneously. They employ specialized encoding architectures for different modalities, cross-modal attention mechanisms, and fusion techniques to integrate information from various sources effectively.",
+    },
 ]
 
 # Verbose paragraphs for summarization tasks
@@ -43,7 +50,7 @@ AI_ENGINEERING_VERBOSE = [
     },
     {
         "text": """GraphRAG architecture represents a sophisticated fusion of graph-based knowledge representation and retrieval-augmented generation, fundamentally transforming how AI systems access and utilize information. The architecture integrates multiple specialized components that work in concert: a dynamic knowledge graph that maintains complex relationships between entities and concepts, an advanced retrieval system that leverages graph traversal algorithms to identify relevant information paths, and a context-aware generation mechanism that incorporates both local and global graph structures. The system employs bidirectional attention mechanisms to navigate the knowledge graph during the retrieval phase, considering both forward and backward relationships between nodes to construct comprehensive context representations. The generation component utilizes a novel graph-conditioned decoder that can attend to both the retrieved graph structures and the input query, enabling it to generate responses that reflect a deeper understanding of the interconnected nature of the information. This architectural approach significantly improves the system's ability to maintain consistency across long-range dependencies and complex reasoning chains, while also enabling more nuanced and contextually appropriate responses to complex queries."""
-    }
+    },
 ]
 
 # G-Eval configuration
@@ -76,17 +83,15 @@ QA_PROMPTS = [
 Question: {{question}}
 
 Please provide a clear and concise answer.""",
-
     """You are an AI engineering expert. Using the following context:
 {{context}}
 
 Answer this question: {{question}}""",
-
     """Based on this technical context:
 {{context}}
 
 Provide a technical answer to: {{question}}
-Focus on accuracy and clarity."""
+Focus on accuracy and clarity.""",
 ]
 
 # Different prompt variations for summarization
@@ -96,31 +101,72 @@ SUMMARY_PROMPTS = [
 {{text}}
 
 Summarize the key technical concepts while maintaining accuracy.""",
-
     """As an AI engineering expert, create a brief technical summary of:
 
 {{text}}
 
 Focus on the core concepts and their relationships.""",
-
     """Analyze and summarize this AI engineering text:
 
 {{text}}
 
-Provide a concise summary that captures the main technical points and their significance."""
+Provide a concise summary that captures the main technical points and their significance.""",
 ]
+
+# Different prompt variations for code generation
+CODE_PROMPTS = [
+    """Write code based on the following instruction:
+
+{{instruction}}
+
+Context/Requirements: {{context}}
+
+Provide a complete, well-structured solution with comments.""",
+    """As an expert developer, implement the following functionality:
+
+{{instruction}}
+
+Details:
+{{context}}
+
+Deliver production-ready code that is efficient and maintainable.""",
+    """Generate code according to these specifications:
+
+Task: {{instruction}}
+Requirements: {{context}}
+
+Implement a solution that follows best practices and handles edge cases appropriately.""",
+]
+
+# Different prompt variations for chat/conversation
+CHAT_PROMPTS = [
+    """Continue this conversation naturally and provide a helpful response to the user's latest message.
+
+Conversation history:
+{{conversation}}
+
+Your response:""",
+    """You are a helpful AI assistant having a conversation with a user. Based on the conversation history below, provide an informative and appropriate response to the most recent message.
+
+{{conversation}}
+
+Your next response:""",
+    """Read the following conversation and provide a knowledgeable, accurate, and helpful reply to the user's last question or statement.
+
+{{conversation}}
+
+Respond to the user's latest message:""",
+]
+
 
 def get_prompts():
     """Get or create versioned prompts in Opik library."""
-    
+
     # Create QA prompt variations
     qa_prompts = []
     for idx, prompt_template in enumerate(QA_PROMPTS):
         # Create one prompt per template version
-        prompt = opik.Prompt(
-            name=f"ai-engineering-qa-v{idx+1}",
-            prompt=prompt_template
-        )
+        prompt = opik.Prompt(name=f"ai-engineering-qa-v{idx+1}", prompt=prompt_template)
         qa_prompts.append(prompt)
 
     # Create summary prompt variations
@@ -128,12 +174,27 @@ def get_prompts():
     for idx, prompt_template in enumerate(SUMMARY_PROMPTS):
         # Create one prompt per template version
         prompt = opik.Prompt(
-            name=f"ai-engineering-summary-v{idx+1}",
-            prompt=prompt_template
+            name=f"ai-engineering-summary-v{idx+1}", prompt=prompt_template
         )
         summary_prompts.append(prompt)
-    
+
+    # Create code prompt variations
+    code_prompts = []
+    for idx, prompt_template in enumerate(CODE_PROMPTS):
+        # Create one prompt per template version
+        prompt = opik.Prompt(name=f"code-generation-v{idx+1}", prompt=prompt_template)
+        code_prompts.append(prompt)
+
+    # Create chat prompt variations
+    chat_prompts = []
+    for idx, prompt_template in enumerate(CHAT_PROMPTS):
+        # Create one prompt per template version
+        prompt = opik.Prompt(name=f"chat-conversation-v{idx+1}", prompt=prompt_template)
+        chat_prompts.append(prompt)
+
     return {
-        "ai_engineering": qa_prompts,
-        "summarization": summary_prompts
-    } 
+        "qa": qa_prompts,
+        "summarization": summary_prompts,
+        "code": code_prompts,
+        "chat": chat_prompts,
+    }
