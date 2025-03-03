@@ -1,41 +1,118 @@
 models:
-#  - name: gpt-4o
-#    description: "GPT-4o"
+  - name: openrouter/meta-llama/llama-3.2-3b-instruct
+    description: "Llama 3.2 3B Instruct"
+    provider: openrouter
+  - name: openrouter/mistralai/mistral-7b-instruct-v0.1
+    description: "Mistral 7B Instruct"
+    provider: openrouter
+  - name: gpt-4.5-preview
+    description: "GPT-4.5 Preview"
+  - name: gpt-4o
+    description: "GPT-4o"
   - name: gpt-4o-mini
     description: "GPT-4o Mini"
-  - name: ollama/mixtral:8x7b
-    description: "Mixtral 8x7B"
-    provider: ollama
-  - name: ollama/llama3.2:1b
-    description: "Llama 3.2 1B"
-    provider: ollama
-  - name: ollama/llama3.2:latest
-    description: "Llama 3.2 3B"
-    provider: ollama
-  - name: ollama/qwen2.5:7b
-    description: "Qwen2.5 7B"
-    provider: ollama
+#  - name: ollama/mixtral:8x7b
+#    description: "Mixtral 8x7B"
+#    provider: ollama
+#  - name: ollama/llama3.2:1b
+#    description: "Llama 3.2 1B"
+#    provider: ollama
+#  - name: ollama/llama3.2:latest
+#    description: "Llama 3.2 3B"
+#    provider: ollama
+#  - name: ollama/qwen2.5:7b
+#    description: "Qwen2.5 7B"
+#    provider: ollama
 #  - name: ollama/qwen2.5:14b
 #    description: "Qwen2.5 14B"
 #    provider: ollama
-  - name: ollama/deepseek-r1:1.5b
-    description: "DeepSeek-R1-Distill-Qwen-1.5B"
-    provider: ollama
-  - name: ollama/deepseek-r1:7b
-    description: "DeepSeek-R1-Distill-Qwen-7B"
-    provider: ollama
-  - name: ollama/deepseek-r1:8b
-    description: "DeepSeek-R1-Distill-Llama-8B"
-    provider: ollama
-  #- name: ollama/deepseek-r1:14b
-  #  description: "DeepSeek R1 14B"
-  #  provider: ollama
+#  - name: ollama/deepseek-r1:1.5b
+#    description: "DeepSeek-R1-Distill-Qwen-1.5B"
+#    provider: ollama
+#  - name: ollama/deepseek-r1:7b
+#    description: "DeepSeek-R1-Distill-Qwen-7B"
+#    provider: ollama
+#  - name: ollama/deepseek-r1:8b
+#    description: "DeepSeek-R1-Distill-Llama-8B"
+#    provider: ollama
+#  - name: ollama/deepseek-r1:14b
+#    description: "DeepSeek R1 14B"
+#    provider: ollama
 
+# Metrics configuration
 metrics:
+  # Core Metrics (built-in)
   - name: hallucination
     enabled: true
+    description: "Checks if output contains information not supported by context"
   - name: answer_relevance
     enabled: true
-  - name: g_eval_summary
+    description: "Evaluates if the answer is relevant to the question"
+  - name: factual_accuracy
     enabled: true
-    description: "Evaluates summary quality using G-Eval" 
+    description: "Evaluates factual accuracy using G-Eval"
+
+  # Heuristic Metrics (rule-based, no LLM required)
+  - name: conciseness
+    enabled: true
+    description: "Measures output conciseness based on token length"
+  - name: response_time
+    enabled: true
+    description: "Measures model response time"
+  - name: format_compliance
+    enabled: true
+    description: "Checks if output follows requested format (JSON, code block, etc.)"
+
+  # LLM-as-Judge Metrics
+  - name: fluency
+    enabled: true
+    description: "Evaluates grammar, style, and fluency of the output"
+  - name: toxicity
+    enabled: true
+    description: "Checks for harmful, biased, or inappropriate content"
+  - name: reasoning_quality
+    enabled: true
+    description: "Evaluates logical reasoning and critical thinking quality"
+  - name: factual_accuracy
+    enabled: true
+    description: "Evaluates accuracy of factual claims compared to context"
+  - name: code_quality
+    enabled: true
+    description: "Evaluates quality of generated code (correctness, readability, efficiency)"
+
+# Task types and their configurations
+tasks:
+  - name: qa
+    description: "Question Answering tasks"
+    metrics:
+      - hallucination
+      - answer_relevance
+      - conciseness
+      - fluency
+      - reasoning_quality
+      - factual_accuracy
+
+  - name: summarization
+    description: "Text summarization tasks"
+    metrics:
+      - hallucination
+      - g_eval_summary
+      - conciseness
+      - fluency
+      - factual_accuracy
+
+  - name: code
+    description: "Code generation tasks"
+    metrics:
+      - code_quality
+      - format_compliance
+      - conciseness
+      - response_time
+
+  - name: chat
+    description: "Conversational tasks"
+    metrics:
+      - fluency
+      - toxicity
+      - response_time
+      - hallucination
