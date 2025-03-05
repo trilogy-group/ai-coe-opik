@@ -29,6 +29,14 @@ QA_SAMPLES = [
         "expected_output": "Multimodal models use specialized encoders for each input type (text, images, audio, etc.), followed by cross-modal fusion mechanisms to create unified representations. This enables understanding relationships between different modalities for comprehensive analysis.",
         "context": "Multimodal models are designed to process and understand multiple types of input data simultaneously. They employ specialized encoding architectures for different modalities, cross-modal attention mechanisms, and fusion techniques to integrate information from various sources effectively.",
     },
+    {
+    "question": "Critically assess the trade-offs between model size and performance in large language models. How does model distillation impact these trade-offs, and what challenges arise when scaling down models?",
+    "expected_output": ("Model distillation reduces model size by transferring knowledge from a large model to a smaller one, "
+                        "but this process may lose subtle reasoning nuances and robustness. Trade-offs include diminished ability to handle edge cases "
+                        "and potential oversimplification of complex patterns. Balancing these factors requires careful data selection and iterative refinement."),
+    "context": ("Large language models offer impressive performance but are resource-intensive. Model distillation aims to create smaller, efficient models; "
+                "however, the process introduces challenges in maintaining the full spectrum of reasoning capabilities.")
+    },
 ]
 
 # ===== Summarization Dataset =====
@@ -43,6 +51,15 @@ SUMMARIZATION_SAMPLES = [
         "task": "summarize",
         "reference_summary": "GraphRAG combines graph-based knowledge representation with retrieval-augmented generation through a knowledge graph, graph traversal algorithms, and a context-aware generation mechanism. Its bidirectional attention mechanisms and graph-conditioned decoder enable deeper understanding of interconnected information, improving consistency across complex reasoning and enabling more contextually appropriate responses.",
     },
+    {
+    "text": ("Recent innovations in transformer architectures have led to models capable of multi-modal understanding and cross-domain generalization. "
+             "These models integrate text, image, and audio processing to provide unified insights into complex data. However, the integration "
+             "presents challenges in preserving modality-specific nuances, requiring sophisticated balancing techniques. Research continues to focus "
+             "on ensuring that increased versatility does not come at the expense of specialized performance."),
+    "task": "summarize",
+    "reference_summary": ("Innovative transformer models now integrate multi-modal data processing across text, image, and audio, but preserving modality-specific "
+                          "nuances remains a significant challenge.")
+},
 ]
 
 # ===== Code Generation Dataset =====
@@ -122,7 +139,7 @@ CODE_SAMPLES = [
                 }
             }
         ]
-    }
+    },
 ]
 
 # ===== Chat/Conversation Dataset =====
@@ -161,6 +178,16 @@ CHAT_SAMPLES = [
         ],
         "expected_output": "Yes, there are several approaches that combine supervised and unsupervised learning techniques:\n\n1. Semi-supervised learning: Uses a small amount of labeled data with a large amount of unlabeled data. The model learns from the structure provided by unlabeled data while being guided by the labeled examples.\n\n2. Self-supervised learning: Creates supervisory signals from the data itself without manual labeling, by predicting parts of the input from other parts.\n\n3. Transfer learning: Pre-trains a model on an unsupervised task and then fine-tunes it on a supervised task.\n\n4. Reinforcement learning with unsupervised pre-training: Uses unsupervised methods to learn good representations before applying reinforcement learning.\n\n5. Hybrid models: Architectures like autoencoders can be used unsupervised for dimensionality reduction, then the encoded representations can be used for supervised tasks.\n\nThese combined approaches often deliver better performance than purely supervised or unsupervised methods, especially when labeled data is limited.",
     },
+    {
+    "conversation": [
+        {"role": "user", "content": "I'm feeling really overwhelmed with my workload and personal issues. I don't know how to manage my stress."},
+        {"role": "assistant", "content": "I'm sorry to hear that. It sounds like you're under a lot of pressure."},
+        {"role": "user", "content": "Yes, sometimes it feels like nothing will get better."}
+    ],
+    "expected_output": ("I understand that you're feeling overwhelmed. It might help to break down your tasks into smaller, manageable parts and set achievable goals. "
+                        "Consider taking short breaks, practicing mindfulness, or speaking with someone who can support you. Remember, it's okay to ask for help, "
+                        "and even small steps can lead to meaningful progress.")
+},
 ]
 
 # Dictionary of all datasets for easy access

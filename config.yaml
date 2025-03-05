@@ -1,16 +1,28 @@
 models:
-  - name: openrouter/meta-llama/llama-3.2-3b-instruct
-    description: "Llama 3.2 3B Instruct"
-    provider: openrouter
-  - name: openrouter/mistralai/mistral-7b-instruct-v0.1
-    description: "Mistral 7B Instruct"
-    provider: openrouter
   - name: gpt-4.5-preview
     description: "GPT-4.5 Preview"
   - name: gpt-4o
     description: "GPT-4o"
   - name: gpt-4o-mini
     description: "GPT-4o Mini"
+  - name: openrouter/deepseek/deepseek-r1:free
+    description: "DeepSeek R1"
+    provider: openrouter
+  - name: openrouter/deepseek/deepseek-r1-distill-llama-70b:free
+    description: "DeepSeek R1 Distill Llama 70B"
+    provider: openrouter
+  - name: openrouter/meta-llama/llama-3.3-70b-instruct:free
+    description: "Llama 3.3 70B Instruct"
+    provider: openrouter
+  - name: openrouter/meta-llama/llama-3.2-3b-instruct
+    description: "Llama 3.2 3B Instruct"
+    provider: openrouter
+  - name: openrouter/google/gemini-2.0-flash-thinking-exp:free
+    description: "Gemini 2.0 Flash Thinking Experimental"
+    provider: openrouter
+  - name: openrouter/mistralai/mistral-7b-instruct-v0.1
+    description: "Mistral 7B Instruct"
+    provider: openrouter
 #  - name: ollama/mixtral:8x7b
 #    description: "Mixtral 8x7B"
 #    provider: ollama
@@ -79,6 +91,21 @@ metrics:
   - name: code_quality
     enabled: true
     description: "Evaluates quality of generated code (correctness, readability, efficiency)"
+  - name: algorithmic_efficiency
+    enabled: true
+    description: "Evaluates efficiency of algorithms in generated code"
+  - name: technical_nuance
+    enabled: true
+    description: "Evaluates understanding of technical concepts and domain-specific knowledge"
+  - name: empathy
+    enabled: true
+    description: "Evaluates emotional awareness and appropriate tone in responses"
+  - name: multistep_reasoning
+    enabled: true
+    description: "Evaluates ability to follow multi-step reasoning processes"
+  - name: summary_quality
+    enabled: true
+    description: "Evaluates quality of text summarization"
 
 # Task types and their configurations
 tasks:
@@ -91,15 +118,19 @@ tasks:
       - fluency
       - reasoning_quality
       - factual_accuracy
+      - technical_nuance
+      - multistep_reasoning
+      - empathy
 
   - name: summarization
     description: "Text summarization tasks"
     metrics:
       - hallucination
-      - g_eval_summary
+      - summary_quality
       - conciseness
       - fluency
       - factual_accuracy
+      - technical_nuance
 
   - name: code
     description: "Code generation tasks"
@@ -108,6 +139,8 @@ tasks:
       - format_compliance
       - conciseness
       - response_time
+      - algorithmic_efficiency
+      - technical_nuance
 
   - name: chat
     description: "Conversational tasks"
@@ -116,3 +149,5 @@ tasks:
       - toxicity
       - response_time
       - hallucination
+      - empathy
+      - technical_nuance

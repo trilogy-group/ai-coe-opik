@@ -16,7 +16,7 @@ import opik
 from opik.evaluation import evaluate_prompt
 
 # Custom metrics
-from metrics import ResponseTimeMetric
+# Import all metrics from our new package
 
 # Import Opik's built-in metrics
 from opik.evaluation.metrics import GEval, IsJson
@@ -34,63 +34,30 @@ import tabulate
 
 # Local imports
 from config import Config
-from metrics import (
-    ConcisenessMetric,
-    ResponseTimeMetric,
-    FormatComplianceMetric,
-    FluencyMetric,
-    ToxicityMetric,
-    ReasoningMetric,
-    GEvalMetric,
-    CustomGEval,
-)
+# Import CustomGEval class and everything else from our metrics package
+from metrics.base import CustomGEval
+
+# Import our custom metrics
+from metrics.response_time import ResponseTimeMetric
+from metrics.conciseness import ConcisenessMetric
+from metrics.format_compliance import FormatComplianceMetric
+from metrics.hallucination import CustomHallucination
+from metrics.answer_relevance import CustomAnswerRelevance
+from metrics.fluency import FluencyMetric, create_fluency_metric
+from metrics.toxicity import ToxicityMetric, create_toxicity_metric
+from metrics.reasoning import ReasoningMetric, create_reasoning_metric
+from metrics.factual_accuracy import FactualAccuracyMetric, create_factual_accuracy_metric
+from metrics.code_quality import CodeQualityMetric, create_code_quality_metric
+from metrics.summary_quality import SummaryQualityMetric, create_summary_quality_metric
+from metrics.algorithmic_efficiency import AlgorithmicEfficiencyMetric, create_algorithmic_efficiency_metric
+from metrics.technical_nuance import TechnicalNuanceMetric, create_technical_nuance_metric
+from metrics.empathy import EmpathyMetric, create_empathy_metric
+from metrics.multistep_reasoning import MultistepReasoningMetric, create_multistep_reasoning_metric
 
 
-# Create custom wrappers that don't use logprobs
-class CustomHallucination(CustomGEval):
-    def __init__(self, name: str = "hallucination", model: str = None):
-        # Get the prompt template from the Opik original implementation
-        hallucination_metric = OpikHallucination()
-        # Use the TEMPLATE from hallucination.metric.py but initialize with our CustomGEval
-        task_intro = "You are an expert fact-checker. Evaluate whether the following output contains any hallucinations or fabricated information."
-        criteria = """Carefully analyze whether the output contains any information that is not supported by the input/context.
-        Score on a scale of 0-5 where:
-        0 = No hallucinations at all, fully factual
-        5 = Significant hallucinations present
-        
-        Provide a score and brief explanation."""
-
-        super().__init__(
-            name=name,
-            task_introduction=task_intro,
-            evaluation_criteria=criteria,
-            model=model,
-        )
-
-
-class CustomAnswerRelevance(CustomGEval):
-    def __init__(self, name: str = "answer_relevance", model: str = None):
-        # Get the prompt template from the Opik original implementation
-        answer_relevance_metric = OpikAnswerRelevance()
-        # Use the TEMPLATE from answer_relevance.metric.py but initialize with our CustomGEval
-        task_intro = "You are an expert in evaluating question answering systems."
-        criteria = """Evaluate whether the answer is relevant to the question and addresses what was asked.
-        Score on a scale of 0-5 where:
-        0 = Completely irrelevant or off-topic
-        5 = Directly addresses the question with high relevance
-        
-        Provide a score and brief explanation."""
-
-        super().__init__(
-            name=name,
-            task_introduction=task_intro,
-            evaluation_criteria=criteria,
-            model=model,
-        )
-
-
-from prompts import get_prompts, GEVAL_TASK_INTRO, GEVAL_CRITERIA
+from prompts import get_prompts
 from datasets import ALL_DATASETS
+# Metrics are already imported above
 
 # Load environment variables
 load_dotenv()
@@ -732,40 +699,61 @@ def get_metrics_for_task(task_type, config, evaluator_model=None):
                 metrics.append(CustomAnswerRelevance(model=evaluator_model))
             else:
                 metrics.append(CustomAnswerRelevance())
-        elif (
-            metric_config.name == "factual_accuracy"
-            or metric_config.name == "summary_quality"
-        ):
-            # Use our custom GEvalMetric wrapper
-            # Use a descriptive name based on which metric was requested
+        elif metric_config.name == "factual_accuracy":
+            # LLM-based metric for factual accuracy
+            
             if evaluator_model:
-                metrics.append(
-                    GEvalMetric(
-                        task_type=task_type,
-                        task_introduction=GEVAL_TASK_INTRO,
-                        evaluation_criteria=GEVAL_CRITERIA,
-                        model=evaluator_model,
-                        name=metric_config.name,
-                    )
-                )
+                metrics.append(FactualAccuracyMetric(model=evaluator_model))
             else:
-                metrics.append(
-                    GEvalMetric(
-                        task_type=task_type,
-                        task_introduction=GEVAL_TASK_INTRO,
-                        evaluation_criteria=GEVAL_CRITERIA,
-                        name=metric_config.name,
-                    )
-                )
+                metrics.append(FactualAccuracyMetric())
+                
+        elif metric_config.name == "summary_quality":
+            # LLM-based metric for summary quality
+            
+            if evaluator_model:
+                metrics.append(SummaryQualityMetric(model=evaluator_model))
+            else:
+                metrics.append(SummaryQualityMetric())
 
         elif metric_config.name == "code_quality":
             # LLM-based metric for code quality
-            from metrics import CodeQualityMetric
 
             if evaluator_model:
                 metrics.append(CodeQualityMetric(model=evaluator_model))
             else:
                 metrics.append(CodeQualityMetric())
+                
+        elif metric_config.name == "algorithmic_efficiency":
+            # LLM-based metric for algorithm efficiency
+
+            if evaluator_model:
+                metrics.append(AlgorithmicEfficiencyMetric(model=evaluator_model))
+            else:
+                metrics.append(AlgorithmicEfficiencyMetric())
+                
+        elif metric_config.name == "technical_nuance":
+            # LLM-based metric for technical nuance
+
+            if evaluator_model:
+                metrics.append(TechnicalNuanceMetric(model=evaluator_model))
+            else:
+                metrics.append(TechnicalNuanceMetric())
+                
+        elif metric_config.name == "empathy":
+            # LLM-based metric for empathy
+
+            if evaluator_model:
+                metrics.append(EmpathyMetric(model=evaluator_model))
+            else:
+                metrics.append(EmpathyMetric())
+                
+        elif metric_config.name == "multistep_reasoning":
+            # LLM-based metric for multistep reasoning
+
+            if evaluator_model:
+                metrics.append(MultistepReasoningMetric(model=evaluator_model))
+            else:
+                metrics.append(MultistepReasoningMetric())
 
     return metrics
 

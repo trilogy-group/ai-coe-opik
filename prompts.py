@@ -53,10 +53,10 @@ AI_ENGINEERING_VERBOSE = [
     },
 ]
 
-# G-Eval configuration
-GEVAL_TASK_INTRO = """You are an expert evaluator assessing the quality of AI-generated summaries. You will evaluate how well a summary captures the key technical concepts from a detailed AI engineering text while maintaining accuracy and conciseness."""
+# G-Eval configuration for summarization
+SUMMARY_QUALITY_INTRO = """You are an expert evaluator assessing the quality of AI-generated summaries. You will evaluate how well a summary captures the key technical concepts from a detailed AI engineering text while maintaining accuracy and conciseness."""
 
-GEVAL_CRITERIA = """Please evaluate the summary based on the following criteria:
+SUMMARY_QUALITY_CRITERIA = """Please evaluate the summary based on the following criteria:
 
 1. Technical Accuracy (0-5):
 - Does the summary maintain technical accuracy of the original concepts?
