@@ -48,14 +48,14 @@ def create_g_eval_metric(
 ) -> GEvalMetric:
     """
     Factory function to create a G-Eval metric.
-    
+
     Args:
         task_type: Type of task
         task_introduction: Introduction to the task
         evaluation_criteria: Criteria for evaluation
         name: Name of the metric
         model: Optional model to use for evaluation
-        
+
     Returns:
         A configured GEvalMetric instance
     """

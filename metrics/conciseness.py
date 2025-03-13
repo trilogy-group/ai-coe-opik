@@ -27,10 +27,10 @@ class ConcisenessMetric(BaseMetric):
         """
         Get approximate token count for English text.
         This is a rough approximation, using 4 chars per token on average.
-        
+
         Args:
             text: Text to count tokens for
-            
+
         Returns:
             Approximate token count
         """
@@ -39,14 +39,14 @@ class ConcisenessMetric(BaseMetric):
     def score(self, output: str, **kwargs) -> ScoreResult:
         """
         Score the conciseness of the output.
-        
+
         Uses a sigmoid function to normalize token counts, with different
         optimal ranges for different content types.
-        
+
         Args:
             output: The output to evaluate
             **kwargs: Additional arguments
-            
+
         Returns:
             ScoreResult with conciseness score
         """
@@ -62,12 +62,12 @@ class ConcisenessMetric(BaseMetric):
 
         # Adjust scoring based on content type
         content_type = kwargs.get("content_type", "text")
-        
+
         if content_type == "code":
             # For code, moderate length is ideal (not too short, not too verbose)
             # Use a bell curve centered around an optimal token count
             optimal_token_count = 200  # Around 50 lines of code
-            
+
             # Score decreases as we move away from the optimal token count
             # in either direction, but we're more lenient with shorter code
             if token_count <= optimal_token_count:
@@ -76,11 +76,13 @@ class ConcisenessMetric(BaseMetric):
             else:
                 # For longer code, score decreases from 1.0 to 0.0
                 normalized_score = max(
-                    0.0, 1.0 - 0.5 * ((token_count - optimal_token_count) / optimal_token_count)
+                    0.0,
+                    1.0
+                    - 0.5 * ((token_count - optimal_token_count) / optimal_token_count),
                 )
-                
+
             reason = f"Code has approximately {token_count} tokens"
-            
+
         else:  # text, qa, etc.
             # For text, shorter is generally better
             # Use a sigmoid function to map token count to a score
@@ -91,11 +93,11 @@ class ConcisenessMetric(BaseMetric):
             # - ~2000+ tokens (long doc) → <0.1 score
             sigmoid_midpoint = 400  # Token count where score is 0.5
             sigmoid_steepness = 300  # Controls how quickly score drops
-            
+
             normalized_score = 1.0 / (
                 1.0 + math.exp((token_count - sigmoid_midpoint) / sigmoid_steepness)
             )
-            
+
             reason = f"Text has approximately {token_count} tokens"
 
         return ScoreResult(
@@ -108,7 +110,7 @@ class ConcisenessMetric(BaseMetric):
 def create_conciseness_metric() -> ConcisenessMetric:
     """
     Factory function to create a conciseness metric.
-    
+
     Returns:
         A configured ConcisenessMetric instance
     """

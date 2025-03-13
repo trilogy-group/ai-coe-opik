@@ -6,7 +6,9 @@ from typing import Optional
 from .base import CustomGEval
 
 # Define constants specific to this metric
-ALGORITHMIC_EFFICIENCY_INTRO = """You are an expert in algorithmic analysis evaluating code efficiency."""
+ALGORITHMIC_EFFICIENCY_INTRO = (
+    """You are an expert in algorithmic analysis evaluating code efficiency."""
+)
 ALGORITHMIC_EFFICIENCY_CRITERIA = """
 Evaluate the following code on a scale of 0-5 for its algorithmic efficiency.
 Consider these dimensions:
@@ -22,14 +24,16 @@ Provide a score and brief explanation.
 class AlgorithmicEfficiencyMetric(CustomGEval):
     """
     Evaluates the algorithmic efficiency of code outputs.
-    
+
     Measures time complexity, space complexity, scalability, data structure choice, and optimizations.
     """
-    
-    def __init__(self, name: str = "algorithmic_efficiency", model: Optional[str] = None):
+
+    def __init__(
+        self, name: str = "algorithmic_efficiency", model: Optional[str] = None
+    ):
         """
         Initialize the algorithmic efficiency metric.
-        
+
         Args:
             name: Metric name
             model: Optional model to use for evaluation
@@ -45,7 +49,7 @@ class AlgorithmicEfficiencyMetric(CustomGEval):
 def create_algorithmic_efficiency_metric() -> AlgorithmicEfficiencyMetric:
     """
     Factory function to create an algorithmic efficiency metric.
-    
+
     Returns:
         A configured AlgorithmicEfficiencyMetric instance
     """

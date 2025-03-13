@@ -21,14 +21,14 @@ Provide a score and brief explanation.
 class TechnicalNuanceMetric(CustomGEval):
     """
     Evaluates the technical nuance of content.
-    
+
     Measures technical precision, conceptual accuracy, depth, and contextual awareness.
     """
-    
+
     def __init__(self, name: str = "technical_nuance", model: Optional[str] = None):
         """
         Initialize the technical nuance metric.
-        
+
         Args:
             name: Metric name
             model: Optional model to use for evaluation
@@ -44,7 +44,7 @@ class TechnicalNuanceMetric(CustomGEval):
 def create_technical_nuance_metric() -> TechnicalNuanceMetric:
     """
     Factory function to create a technical nuance metric.
-    
+
     Returns:
         A configured TechnicalNuanceMetric instance
     """

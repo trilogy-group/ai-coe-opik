@@ -30,12 +30,16 @@ QA_SAMPLES = [
         "context": "Multimodal models are designed to process and understand multiple types of input data simultaneously. They employ specialized encoding architectures for different modalities, cross-modal attention mechanisms, and fusion techniques to integrate information from various sources effectively.",
     },
     {
-    "question": "Critically assess the trade-offs between model size and performance in large language models. How does model distillation impact these trade-offs, and what challenges arise when scaling down models?",
-    "expected_output": ("Model distillation reduces model size by transferring knowledge from a large model to a smaller one, "
-                        "but this process may lose subtle reasoning nuances and robustness. Trade-offs include diminished ability to handle edge cases "
-                        "and potential oversimplification of complex patterns. Balancing these factors requires careful data selection and iterative refinement."),
-    "context": ("Large language models offer impressive performance but are resource-intensive. Model distillation aims to create smaller, efficient models; "
-                "however, the process introduces challenges in maintaining the full spectrum of reasoning capabilities.")
+        "question": "Critically assess the trade-offs between model size and performance in large language models. How does model distillation impact these trade-offs, and what challenges arise when scaling down models?",
+        "expected_output": (
+            "Model distillation reduces model size by transferring knowledge from a large model to a smaller one, "
+            "but this process may lose subtle reasoning nuances and robustness. Trade-offs include diminished ability to handle edge cases "
+            "and potential oversimplification of complex patterns. Balancing these factors requires careful data selection and iterative refinement."
+        ),
+        "context": (
+            "Large language models offer impressive performance but are resource-intensive. Model distillation aims to create smaller, efficient models; "
+            "however, the process introduces challenges in maintaining the full spectrum of reasoning capabilities."
+        ),
     },
 ]
 
@@ -52,14 +56,18 @@ SUMMARIZATION_SAMPLES = [
         "reference_summary": "GraphRAG combines graph-based knowledge representation with retrieval-augmented generation through a knowledge graph, graph traversal algorithms, and a context-aware generation mechanism. Its bidirectional attention mechanisms and graph-conditioned decoder enable deeper understanding of interconnected information, improving consistency across complex reasoning and enabling more contextually appropriate responses.",
     },
     {
-    "text": ("Recent innovations in transformer architectures have led to models capable of multi-modal understanding and cross-domain generalization. "
-             "These models integrate text, image, and audio processing to provide unified insights into complex data. However, the integration "
-             "presents challenges in preserving modality-specific nuances, requiring sophisticated balancing techniques. Research continues to focus "
-             "on ensuring that increased versatility does not come at the expense of specialized performance."),
-    "task": "summarize",
-    "reference_summary": ("Innovative transformer models now integrate multi-modal data processing across text, image, and audio, but preserving modality-specific "
-                          "nuances remains a significant challenge.")
-},
+        "text": (
+            "Recent innovations in transformer architectures have led to models capable of multi-modal understanding and cross-domain generalization. "
+            "These models integrate text, image, and audio processing to provide unified insights into complex data. However, the integration "
+            "presents challenges in preserving modality-specific nuances, requiring sophisticated balancing techniques. Research continues to focus "
+            "on ensuring that increased versatility does not come at the expense of specialized performance."
+        ),
+        "task": "summarize",
+        "reference_summary": (
+            "Innovative transformer models now integrate multi-modal data processing across text, image, and audio, but preserving modality-specific "
+            "nuances remains a significant challenge."
+        ),
+    },
 ]
 
 # ===== Code Generation Dataset =====
@@ -71,23 +79,20 @@ CODE_SAMPLES = [
         "test_cases": [
             {"input": ["abcdefg", "abcxyz"], "expected": "abc"},
             {"input": ["programming", "gaming"], "expected": "ming"},
-            {
-                "input": ["abcdefghij", "defghiklmn"],
-                "expected": "defghi"
-            }
-        ]
+            {"input": ["abcdefghij", "defghiklmn"], "expected": "defghi"},
+        ],
     },
     {
         "instruction": "Create a multi-step React registration form with validation, including an address sub-form with dynamic fields.",
         "context": "The multi-step form should collect username, email, password, and addresses. Each step should have validation. Step 1: username (3-20 chars), email (valid format), password (8+ chars with numbers and special chars). Step 2: allow adding multiple addresses. Each address requires street, city, and country fields. Use client-side validation for required fields and display inline errors. Utilize local state or a form management library.",
         "expected_format": "React JSX component",
-        "libraries": ["react", "formik", "yup"]
+        "libraries": ["react", "formik", "yup"],
     },
     {
         "instruction": "Write a SQL query to find the top 5 customers (name, email) who spent the most money in the last calendar month, factoring in refunds from a 'refunds' table.",
         "context": "You have three tables: 'orders' (id, customer_id, order_date, total_amount), 'customers' (id, name, email), and 'refunds' (id, order_id, refund_amount, refund_date). Find the top 5 customers by net spending (total orders - total refunds) in the last calendar month. Show name, email, and net amount spent.",
         "expected_format": "SQL query",
-        "schema": "orders(id INT, customer_id INT, order_date DATE, total_amount DECIMAL);\ncustomers(id INT, name VARCHAR, email VARCHAR);\nrefunds(id INT, order_id INT, refund_amount DECIMAL, refund_date DATE)"
+        "schema": "orders(id INT, customer_id INT, order_date DATE, total_amount DECIMAL);\ncustomers(id INT, name VARCHAR, email VARCHAR);\nrefunds(id INT, order_id INT, refund_amount DECIMAL, refund_date DATE)",
     },
     {
         "instruction": "Given a 2D grid representing a maze, write a Python function to find the shortest path from a start cell to an end cell. Some cells have a 'weight' indicating the cost of passing through them. Return the path cost and the path itself.",
@@ -95,50 +100,24 @@ CODE_SAMPLES = [
         "expected_format": "Python function",
         "test_cases": [
             {
-                "input": [
-                    [
-                        [1, 1, 1],
-                        [1, 5, 1],
-                        [1, 1, 1]
-                    ],
-                    (0, 0),
-                    (2, 2)
-                ],
+                "input": [[[1, 1, 1], [1, 5, 1], [1, 1, 1]], (0, 0), (2, 2)],
                 "expected": {
-                    "cost": 4, 
-                    "path": [(0,0), (1,0), (2,0), (2,1), (2,2)]
-                }
+                    "cost": 4,
+                    "path": [(0, 0), (1, 0), (2, 0), (2, 1), (2, 2)],
+                },
             },
             {
-                "input": [
-                    [
-                        [2, 5, 2],
-                        [9, 1, 3],
-                        [1, 1, 4]
-                    ],
-                    (0, 0),
-                    (2, 2)
-                ],
+                "input": [[[2, 5, 2], [9, 1, 3], [1, 1, 4]], (0, 0), (2, 2)],
                 "expected": {
                     "cost": 14,
-                    "path": [(0,0), (0,1), (0,2), (1,2), (2,2)]
-                }
+                    "path": [(0, 0), (0, 1), (0, 2), (1, 2), (2, 2)],
+                },
             },
             {
-                "input": [
-                    [
-                        [1, 10],
-                        [10, 1]
-                    ],
-                    (0, 0),
-                    (1, 1)
-                ],
-                "expected": {
-                    "cost": 11,
-                    "path": [(0,0), (0,1), (1,1)]
-                }
-            }
-        ]
+                "input": [[[1, 10], [10, 1]], (0, 0), (1, 1)],
+                "expected": {"cost": 11, "path": [(0, 0), (0, 1), (1, 1)]},
+            },
+        ],
     },
 ]
 
@@ -179,15 +158,26 @@ CHAT_SAMPLES = [
         "expected_output": "Yes, there are several approaches that combine supervised and unsupervised learning techniques:\n\n1. Semi-supervised learning: Uses a small amount of labeled data with a large amount of unlabeled data. The model learns from the structure provided by unlabeled data while being guided by the labeled examples.\n\n2. Self-supervised learning: Creates supervisory signals from the data itself without manual labeling, by predicting parts of the input from other parts.\n\n3. Transfer learning: Pre-trains a model on an unsupervised task and then fine-tunes it on a supervised task.\n\n4. Reinforcement learning with unsupervised pre-training: Uses unsupervised methods to learn good representations before applying reinforcement learning.\n\n5. Hybrid models: Architectures like autoencoders can be used unsupervised for dimensionality reduction, then the encoded representations can be used for supervised tasks.\n\nThese combined approaches often deliver better performance than purely supervised or unsupervised methods, especially when labeled data is limited.",
     },
     {
-    "conversation": [
-        {"role": "user", "content": "I'm feeling really overwhelmed with my workload and personal issues. I don't know how to manage my stress."},
-        {"role": "assistant", "content": "I'm sorry to hear that. It sounds like you're under a lot of pressure."},
-        {"role": "user", "content": "Yes, sometimes it feels like nothing will get better."}
-    ],
-    "expected_output": ("I understand that you're feeling overwhelmed. It might help to break down your tasks into smaller, manageable parts and set achievable goals. "
-                        "Consider taking short breaks, practicing mindfulness, or speaking with someone who can support you. Remember, it's okay to ask for help, "
-                        "and even small steps can lead to meaningful progress.")
-},
+        "conversation": [
+            {
+                "role": "user",
+                "content": "I'm feeling really overwhelmed with my workload and personal issues. I don't know how to manage my stress.",
+            },
+            {
+                "role": "assistant",
+                "content": "I'm sorry to hear that. It sounds like you're under a lot of pressure.",
+            },
+            {
+                "role": "user",
+                "content": "Yes, sometimes it feels like nothing will get better.",
+            },
+        ],
+        "expected_output": (
+            "I understand that you're feeling overwhelmed. It might help to break down your tasks into smaller, manageable parts and set achievable goals. "
+            "Consider taking short breaks, practicing mindfulness, or speaking with someone who can support you. Remember, it's okay to ask for help, "
+            "and even small steps can lead to meaningful progress."
+        ),
+    },
 ]
 
 # Dictionary of all datasets for easy access

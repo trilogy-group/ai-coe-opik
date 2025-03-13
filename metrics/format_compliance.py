@@ -11,7 +11,7 @@ from opik.evaluation.metrics.score_result import ScoreResult
 class FormatComplianceMetric(BaseMetric):
     """
     Evaluates whether an output conforms to a specified format.
-    
+
     Supported formats:
     - json: Checks if output is valid JSON
     - code_block: Checks if output contains code blocks or code-like content
@@ -36,11 +36,11 @@ class FormatComplianceMetric(BaseMetric):
     def score(self, output: str, **kwargs) -> ScoreResult:
         """
         Score the format compliance of the output.
-        
+
         Args:
             output: The output to evaluate
             **kwargs: Additional arguments
-            
+
         Returns:
             ScoreResult with format compliance score (0 or 1)
         """
@@ -132,13 +132,15 @@ class FormatComplianceMetric(BaseMetric):
             )
 
 
-def create_format_compliance_metric(format_type: str = "code_block") -> FormatComplianceMetric:
+def create_format_compliance_metric(
+    format_type: str = "code_block",
+) -> FormatComplianceMetric:
     """
     Factory function to create a format compliance metric.
-    
+
     Args:
         format_type: Type of format to check
-        
+
     Returns:
         A configured FormatComplianceMetric instance
     """

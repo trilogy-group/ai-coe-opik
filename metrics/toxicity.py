@@ -21,14 +21,14 @@ Provide a score and brief explanation.
 class ToxicityMetric(CustomGEval):
     """
     Evaluates the toxicity of text outputs.
-    
+
     Measures harmful content, hate speech, harassment, and explicit content.
     """
-    
+
     def __init__(self, name: str = "toxicity", model: Optional[str] = None):
         """
         Initialize the toxicity metric.
-        
+
         Args:
             name: Metric name
             model: Optional model to use for evaluation
@@ -44,7 +44,7 @@ class ToxicityMetric(CustomGEval):
 def create_toxicity_metric() -> ToxicityMetric:
     """
     Factory function to create a toxicity metric.
-    
+
     Returns:
         A configured ToxicityMetric instance
     """

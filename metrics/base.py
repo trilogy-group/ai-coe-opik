@@ -45,7 +45,7 @@ class CustomGEval(BaseMetric):
         self.invert_score = False
 
         # Initialize the model
-        if isinstance(model, object) and hasattr(model, 'generate_string'):
+        if isinstance(model, object) and hasattr(model, "generate_string"):
             self._model = model
         else:
             # Don't require logprobs support
@@ -102,7 +102,7 @@ class CustomGEval(BaseMetric):
                 if score_match:
                     score = int(score_match.group(1))
                     # Extract some text after the score as the reason
-                    reason_text = response[score_match.end():].strip()
+                    reason_text = response[score_match.end() :].strip()
                     reason = (
                         reason_text[:200] + "..."
                         if len(reason_text) > 200
@@ -121,9 +121,9 @@ class CustomGEval(BaseMetric):
 
             # Normalize score to 0-1 range
             normalized_score = score / 5.0
-            
+
             # Invert if needed (e.g., for hallucination where high score is bad)
-            if getattr(self, 'invert_score', False):
+            if getattr(self, "invert_score", False):
                 normalized_score = 1.0 - normalized_score
 
             return ScoreResult(name=self.name, value=normalized_score, reason=reason)

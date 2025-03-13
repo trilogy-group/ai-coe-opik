@@ -6,7 +6,9 @@ from typing import Optional
 from .base import CustomGEval
 
 # Define constants specific to this metric
-MULTISTEP_REASONING_INTRO = """You are an expert in logical reasoning and critical analysis."""
+MULTISTEP_REASONING_INTRO = (
+    """You are an expert in logical reasoning and critical analysis."""
+)
 MULTISTEP_REASONING_CRITERIA = """
 Evaluate the following answer on a scale of 0-5 for its clarity and completeness in multi-step reasoning.
 Consider these dimensions:
@@ -21,14 +23,14 @@ Provide a score and brief explanation.
 class MultistepReasoningMetric(CustomGEval):
     """
     Evaluates the ability to perform multi-step reasoning.
-    
+
     Measures step-by-step clarity, logical coherence, thoroughness, and integration of evidence.
     """
-    
+
     def __init__(self, name: str = "multistep_reasoning", model: Optional[str] = None):
         """
         Initialize the multistep reasoning metric.
-        
+
         Args:
             name: Metric name
             model: Optional model to use for evaluation
@@ -44,7 +46,7 @@ class MultistepReasoningMetric(CustomGEval):
 def create_multistep_reasoning_metric() -> MultistepReasoningMetric:
     """
     Factory function to create a multi-step reasoning metric.
-    
+
     Returns:
         A configured MultistepReasoningMetric instance
     """

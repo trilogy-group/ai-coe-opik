@@ -45,7 +45,7 @@ class ResponseTimeMetric(BaseMetric):
         # First try to get start time and duration from kwargs
         start_time = kwargs.get("start_time")
         duration = kwargs.get("duration")
-        
+
         if start_time is not None and duration is not None:
             # Convert seconds to minutes
             response_time = duration / 60.0
@@ -96,12 +96,12 @@ class ResponseTimeMetric(BaseMetric):
             value=minutes,
             reason=f"Response time: {minutes:.4f} minutes",
         )
-        
-        
+
+
 def create_response_time_metric() -> ResponseTimeMetric:
     """
     Factory function to create a response time metric.
-    
+
     Returns:
         A configured ResponseTimeMetric instance
     """

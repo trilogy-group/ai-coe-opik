@@ -21,14 +21,14 @@ Provide a score and brief explanation.
 class EmpathyMetric(CustomGEval):
     """
     Evaluates the empathy in conversational responses.
-    
+
     Measures emotional recognition, perspective-taking, engagement, and contextual appropriateness.
     """
-    
+
     def __init__(self, name: str = "empathy", model: Optional[str] = None):
         """
         Initialize the empathy metric.
-        
+
         Args:
             name: Metric name
             model: Optional model to use for evaluation
@@ -44,7 +44,7 @@ class EmpathyMetric(CustomGEval):
 def create_empathy_metric() -> EmpathyMetric:
     """
     Factory function to create an empathy metric.
-    
+
     Returns:
         A configured EmpathyMetric instance
     """

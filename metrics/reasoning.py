@@ -21,14 +21,14 @@ Provide a score and brief explanation.
 class ReasoningMetric(CustomGEval):
     """
     Evaluates the reasoning quality of text outputs.
-    
+
     Measures logical consistency, relevance, comprehensiveness, and soundness.
     """
-    
+
     def __init__(self, name: str = "reasoning_quality", model: Optional[str] = None):
         """
         Initialize the reasoning metric.
-        
+
         Args:
             name: Metric name
             model: Optional model to use for evaluation
@@ -44,7 +44,7 @@ class ReasoningMetric(CustomGEval):
 def create_reasoning_metric() -> ReasoningMetric:
     """
     Factory function to create a reasoning quality metric.
-    
+
     Returns:
         A configured ReasoningMetric instance
     """
