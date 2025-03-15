@@ -11,7 +11,7 @@ Answer: Let me help you with that."""
 # Import datasets from the datasets module
 from datasets import QA_SAMPLES as AI_ENGINEERING_SAMPLES
 from datasets import SUMMARIZATION_SAMPLES as AI_ENGINEERING_VERBOSE
-from datasets import CODE_SAMPLES, CHAT_SAMPLES
+from datasets import CHAT_SAMPLES
 
 # For backward compatibility (these will be removed in a future version)
 # Define sample data for Q&A evaluation

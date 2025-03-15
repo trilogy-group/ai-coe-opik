@@ -10,34 +10,23 @@ from typing import List, Dict, Optional, Union, Any, Tuple, Callable
 import yaml
 
 from dotenv import load_dotenv
+import litellm
 from litellm.exceptions import RateLimitError
 
 import opik
 from opik.evaluation import evaluate_prompt
-
-# Custom metrics
-# Import all metrics from our new package
-
-# Import Opik's built-in metrics
 from opik.evaluation.metrics import GEval, IsJson
-
-# Import the original Hallucination and AnswerRelevance classes
 from opik.evaluation.metrics.llm_judges.hallucination.metric import (
     Hallucination as OpikHallucination,
 )
 from opik.evaluation.metrics.llm_judges.answer_relevance.metric import (
     AnswerRelevance as OpikAnswerRelevance,
 )
-
 import polars as pl
 import tabulate
 
-# Local imports
 from config import Config
-# Import CustomGEval class and everything else from our metrics package
 from metrics.base import CustomGEval
-
-# Import our custom metrics
 from metrics.response_time import ResponseTimeMetric
 from metrics.conciseness import ConcisenessMetric
 from metrics.format_compliance import FormatComplianceMetric
@@ -46,18 +35,25 @@ from metrics.answer_relevance import CustomAnswerRelevance
 from metrics.fluency import FluencyMetric, create_fluency_metric
 from metrics.toxicity import ToxicityMetric, create_toxicity_metric
 from metrics.reasoning import ReasoningMetric, create_reasoning_metric
-from metrics.factual_accuracy import FactualAccuracyMetric, create_factual_accuracy_metric
-from metrics.code_quality import CodeQualityMetric, create_code_quality_metric
+from metrics.factual_accuracy import (
+    FactualAccuracyMetric,
+    create_factual_accuracy_metric,
+)
+
 from metrics.summary_quality import SummaryQualityMetric, create_summary_quality_metric
-from metrics.algorithmic_efficiency import AlgorithmicEfficiencyMetric, create_algorithmic_efficiency_metric
-from metrics.technical_nuance import TechnicalNuanceMetric, create_technical_nuance_metric
+from metrics.technical_nuance import (
+    TechnicalNuanceMetric,
+    create_technical_nuance_metric,
+)
 from metrics.empathy import EmpathyMetric, create_empathy_metric
-from metrics.multistep_reasoning import MultistepReasoningMetric, create_multistep_reasoning_metric
+from metrics.multistep_reasoning import (
+    MultistepReasoningMetric,
+    create_multistep_reasoning_metric,
+)
 
 
 from prompts import get_prompts
 from datasets import ALL_DATASETS
-# Metrics are already imported above
 
 # Load environment variables
 load_dotenv()
@@ -206,7 +202,7 @@ def parse_args():
     )
     parser.add_argument(
         "--task",
-        choices=["qa", "summarization", "code", "chat", "all"],
+        choices=["qa", "summarization", "chat", "all"],
         default="qa",
         help="Task type to evaluate (default: qa)",
     )
@@ -337,6 +333,7 @@ def evaluate_model(
             original_openai_api_base = os.environ.get("OPENAI_API_BASE", None)
             original_openai_api_key = os.environ.get("OPENAI_API_KEY", None)
             original_openrouter_api_key = os.environ.get("OPENROUTER_API_KEY", None)
+            original_xai_api_key = os.environ.get("XAI_API_KEY", None)
 
             try:
                 # Set provider-specific environment variables
@@ -355,6 +352,7 @@ def evaluate_model(
                     # Use just the model name without the provider prefix
                     model_name = model_name.split("/")[-1]
 
+                eval_kwargs = {}
                 # Execute the evaluation with standard parameters
                 result = evaluate_prompt(
                     dataset=dataset,
@@ -364,7 +362,8 @@ def evaluate_model(
                     experiment_name=exp_name,
                     project_name="LLM-Evals",
                     task_threads=14,
-                    verbose=0,  # Add verbose output to help diagnose issues
+                    verbose=0,
+                    **eval_kwargs,
                 )
             finally:
                 # Restore original environment variables
@@ -375,8 +374,10 @@ def evaluate_model(
 
                 if original_openai_api_key:
                     os.environ["OPENAI_API_KEY"] = original_openai_api_key
-                elif "OPENAI_API_KEY" in os.environ and provider == "openrouter":
-                    # Only restore if we changed it for OpenRouter
+                elif "OPENAI_API_KEY" in os.environ and (
+                    provider == "openrouter" or provider == "xai"
+                ):
+                    # Only restore if we changed it for OpenRouter or X.AI
                     del os.environ["OPENAI_API_KEY"]
 
             # If the dataset has sample count information, propagate it
@@ -701,36 +702,19 @@ def get_metrics_for_task(task_type, config, evaluator_model=None):
                 metrics.append(CustomAnswerRelevance())
         elif metric_config.name == "factual_accuracy":
             # LLM-based metric for factual accuracy
-            
+
             if evaluator_model:
                 metrics.append(FactualAccuracyMetric(model=evaluator_model))
             else:
                 metrics.append(FactualAccuracyMetric())
-                
+
         elif metric_config.name == "summary_quality":
             # LLM-based metric for summary quality
-            
+
             if evaluator_model:
                 metrics.append(SummaryQualityMetric(model=evaluator_model))
             else:
                 metrics.append(SummaryQualityMetric())
-
-        elif metric_config.name == "code_quality":
-            # LLM-based metric for code quality
-
-            if evaluator_model:
-                metrics.append(CodeQualityMetric(model=evaluator_model))
-            else:
-                metrics.append(CodeQualityMetric())
-                
-        elif metric_config.name == "algorithmic_efficiency":
-            # LLM-based metric for algorithm efficiency
-
-            if evaluator_model:
-                metrics.append(AlgorithmicEfficiencyMetric(model=evaluator_model))
-            else:
-                metrics.append(AlgorithmicEfficiencyMetric())
-                
         elif metric_config.name == "technical_nuance":
             # LLM-based metric for technical nuance
 
@@ -738,7 +722,7 @@ def get_metrics_for_task(task_type, config, evaluator_model=None):
                 metrics.append(TechnicalNuanceMetric(model=evaluator_model))
             else:
                 metrics.append(TechnicalNuanceMetric())
-                
+
         elif metric_config.name == "empathy":
             # LLM-based metric for empathy
 
@@ -746,7 +730,7 @@ def get_metrics_for_task(task_type, config, evaluator_model=None):
                 metrics.append(EmpathyMetric(model=evaluator_model))
             else:
                 metrics.append(EmpathyMetric())
-                
+
         elif metric_config.name == "multistep_reasoning":
             # LLM-based metric for multistep reasoning
 
@@ -825,7 +809,7 @@ def main():
 
     # Determine which task types to evaluate
     task_types = (
-        ["qa", "summarization", "code", "chat"] if args.task == "all" else [args.task]
+        ["qa", "summarization", "chat"] if args.task == "all" else [args.task]
     )
 
     all_results = []

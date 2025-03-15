@@ -16,11 +16,6 @@ from .fluency import FluencyMetric, create_fluency_metric
 from .toxicity import ToxicityMetric, create_toxicity_metric
 from .reasoning import ReasoningMetric, create_reasoning_metric
 from .factual_accuracy import FactualAccuracyMetric, create_factual_accuracy_metric
-from .code_quality import CodeQualityMetric, create_code_quality_metric
-from .algorithmic_efficiency import (
-    AlgorithmicEfficiencyMetric,
-    create_algorithmic_efficiency_metric,
-)
 from .technical_nuance import TechnicalNuanceMetric, create_technical_nuance_metric
 from .empathy import EmpathyMetric, create_empathy_metric
 from .multistep_reasoning import (
@@ -44,8 +39,6 @@ __all__ = [
     "ToxicityMetric",
     "ReasoningMetric",
     "FactualAccuracyMetric",
-    "CodeQualityMetric",
-    "AlgorithmicEfficiencyMetric",
     "TechnicalNuanceMetric",
     "EmpathyMetric",
     "MultistepReasoningMetric",
@@ -60,8 +53,6 @@ __all__ = [
     "create_toxicity_metric",
     "create_reasoning_metric",
     "create_factual_accuracy_metric",
-    "create_code_quality_metric",
-    "create_algorithmic_efficiency_metric",
     "create_technical_nuance_metric",
     "create_empathy_metric",
     "create_multistep_reasoning_metric",

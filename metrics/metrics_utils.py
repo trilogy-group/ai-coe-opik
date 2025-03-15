@@ -18,8 +18,6 @@ from .fluency import create_fluency_metric
 from .toxicity import create_toxicity_metric
 from .reasoning import create_reasoning_metric
 from .factual_accuracy import create_factual_accuracy_metric
-from .code_quality import create_code_quality_metric
-from .algorithmic_efficiency import create_algorithmic_efficiency_metric
 from .technical_nuance import create_technical_nuance_metric
 from .empathy import create_empathy_metric
 from .multistep_reasoning import create_multistep_reasoning_metric
@@ -107,26 +105,6 @@ def get_metrics_for_task(task_type: str, config: Dict) -> List[BaseMetric]:
 
             elif metric_config.name == "factual_accuracy":
                 task_specific_metrics.append(create_factual_accuracy_metric())
-
-            elif metric_config.name == "technical_nuance":
-                task_specific_metrics.append(create_technical_nuance_metric())
-
-    elif task_type == "code":
-        # Add code-specific metrics
-        for metric_config in config.metrics:
-            if not metric_config.enabled:
-                continue
-
-            if metric_config.name == "code_quality":
-                task_specific_metrics.append(create_code_quality_metric())
-
-            elif metric_config.name == "algorithmic_efficiency":
-                task_specific_metrics.append(create_algorithmic_efficiency_metric())
-
-            elif metric_config.name == "format_compliance":
-                task_specific_metrics.append(
-                    FormatComplianceMetric(format_type="code_block")
-                )
 
             elif metric_config.name == "technical_nuance":
                 task_specific_metrics.append(create_technical_nuance_metric())
