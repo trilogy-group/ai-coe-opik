@@ -78,7 +78,7 @@ class CustomGEval(BaseMetric):
         )
 
         # Add a simple parsing instruction to make output parsing easier
-        instruction = "\nPlease provide your evaluation in a JSON object with 'score' (integer 0-5) and 'reason' keys."
+        instruction = "\nProvide your evaluation in a JSON object with 'score' (integer 0-5) and 'reason' keys. Ensure the score is scaled on a 0-5 range."
         full_prompt = llm_query + instruction
 
         # Generate response without logprobs
@@ -96,6 +96,15 @@ class CustomGEval(BaseMetric):
             if json_match:
                 score = int(json_match.group(1))
                 reason = json_match.group(2)
+
+                # Handle scores outside the expected 0-5 range
+                if score > 5:
+                    # If model responded with a score on a 0-10 scale, rescale it to 0-5
+                    if score <= 10:
+                        score = round(score / 2)
+                    else:
+                        # For any other unexpected scale, cap at 5
+                        score = min(score, 5)
             else:
                 # Fallback regex for scores
                 score_match = re.search(r"\b([0-5])\s*\/?\s*5\b", response)

@@ -290,19 +290,11 @@ def evaluate_model(
         )
         start_time = time.time()
 
-        # Make sure we have a ResponseTimeMetric in the metrics list
-        has_response_time_metric = False
+        # Set start time for ResponseTimeMetric if it exists in metrics list
         for metric in metrics:
             if isinstance(metric, ResponseTimeMetric):
-                has_response_time_metric = True
                 metric.start_time = start_time  # Set the start time
                 break
-
-        # Add a ResponseTimeMetric if not already in the list
-        if not has_response_time_metric:
-            response_time_metric = ResponseTimeMetric()
-            response_time_metric.start_time = start_time
-            metrics.append(response_time_metric)
 
         # Evaluate the model directly
         try:
@@ -568,6 +560,42 @@ def evaluate_model(
         )
 
 
+def format_experiment_name(exp_name, task_type, exp_type, model_or_prompt):
+    """Format experiment name in a shorter format.
+
+    Args:
+        exp_name: Base experiment name prefix (e.g., '01')
+        task_type: Task type (qa, summarization, chat)
+        exp_type: Experiment type (model, prompt)
+        model_or_prompt: Model name or prompt version
+
+    Returns:
+        Shortened experiment name
+    """
+    # Shorten task type to two letters
+    task_short = {"qa": "qa", "summarization": "su", "chat": "ch"}.get(
+        task_type, task_type[:2]
+    )
+
+    # Shorten experiment type to one letter
+    type_short = exp_type[0]
+
+    # Shorten model name by removing provider and family if present
+    if exp_type == "model" and "/" in model_or_prompt:
+        parts = model_or_prompt.split("/")
+
+        # Extract just the model name without provider/family
+        model_short = parts[-1]
+
+        # Remove any free suffix for OpenRouter models
+        if model_short.endswith(":free"):
+            model_short = model_short.replace(":free", "")
+    else:
+        model_short = model_or_prompt
+
+    return f"{exp_name}-{task_short}-{type_short}-{model_short}"
+
+
 def evaluate_prompt_versions(dataset, prompts, metrics, model, exp_name, task_type):
     """Evaluate different prompt versions using a single model."""
     results = []
@@ -576,12 +604,13 @@ def evaluate_prompt_versions(dataset, prompts, metrics, model, exp_name, task_ty
     )
 
     for prompt in prompts:
+        prompt_version = prompt.name.split("-v")[1]
         result = evaluate_model(
             model,
             dataset,
             prompt,
             metrics,
-            f"{exp_name}-{task_type}-prompt-v{prompt.name.split('-v')[1]}",
+            format_experiment_name(exp_name, task_type, "prompt", f"v{prompt_version}"),
             task_type,
         )
         results.append(result)
@@ -602,7 +631,7 @@ def evaluate_models(dataset, prompt, metrics, models, exp_name, task_type):
             dataset,
             prompt,
             metrics,
-            f"{exp_name}-{task_type}-model-{model}",
+            format_experiment_name(exp_name, task_type, "model", model),
             task_type,
         )
         results.append(result)
@@ -808,9 +837,7 @@ def main():
     all_prompts = get_prompts()
 
     # Determine which task types to evaluate
-    task_types = (
-        ["qa", "summarization", "chat"] if args.task == "all" else [args.task]
-    )
+    task_types = ["qa", "summarization", "chat"] if args.task == "all" else [args.task]
 
     all_results = []
 

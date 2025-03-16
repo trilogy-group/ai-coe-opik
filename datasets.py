@@ -75,7 +75,7 @@ QA_SAMPLES = [
     {
         "question": (
             "Summarize the following passage in a single sentence: "
-            "\"The new software release adds multiple features, improves security, and fixes long-standing bugs.\""
+            '"The new software release adds multiple features, improves security, and fixes long-standing bugs."'
         ),
         "context": (
             "Summaries should capture the main points of the passage in a concise format."
@@ -368,13 +368,13 @@ CHAT_SAMPLES = [
             {
                 "role": "system",
                 "content": "In supervised learning, the algorithm learns from labeled training data, "
-                           "with input features and corresponding target outputs. The goal is to learn "
-                           "a mapping function that can predict outputs for new inputs.\n\n"
-                           "In unsupervised learning, the algorithm works with unlabeled data, "
-                           "trying to find patterns, structures, or relationships without explicit guidance. "
-                           "There are no output labels to predict - instead, the system identifies "
-                           "inherent groupings or patterns in the data.\n\nWhich aspect of these learning paradigms "
-                           "are you most interested in?",
+                "with input features and corresponding target outputs. The goal is to learn "
+                "a mapping function that can predict outputs for new inputs.\n\n"
+                "In unsupervised learning, the algorithm works with unlabeled data, "
+                "trying to find patterns, structures, or relationships without explicit guidance. "
+                "There are no output labels to predict - instead, the system identifies "
+                "inherent groupings or patterns in the data.\n\nWhich aspect of these learning paradigms "
+                "are you most interested in?",
             },
             {
                 "role": "user",
@@ -387,7 +387,7 @@ CHAT_SAMPLES = [
             {
                 "role": "user",
                 "content": "I'm feeling really overwhelmed with my workload and personal issues. "
-                           "I don't know how to manage my stress.",
+                "I don't know how to manage my stress.",
             },
             {
                 "role": "assistant",
@@ -492,8 +492,8 @@ CHAT_SAMPLES = [
             {
                 "role": "user",
                 "content": "Please summarize the following text:\n\n"
-                           "\"The quick brown fox jumps over the lazy dog. The dog, surprised by the fox, "
-                           "decided to bark. This startled the fox, which ran away.\"",
+                '"The quick brown fox jumps over the lazy dog. The dog, surprised by the fox, '
+                'decided to bark. This startled the fox, which ran away."',
             },
         ],
     },
@@ -631,141 +631,261 @@ CHAT_SAMPLES = [
     {
         "conversation": [
             {"role": "user", "content": "Can you explain how quantum computing works?"},
-            {"role": "assistant", "content": "Quantum computing is a complex field. Could you specify what aspect you're interested in?"},
-            {"role": "user", "content": "I'm curious about quantum supremacy and how it was achieved."},
+            {
+                "role": "assistant",
+                "content": "Quantum computing is a complex field. Could you specify what aspect you're interested in?",
+            },
+            {
+                "role": "user",
+                "content": "I'm curious about quantum supremacy and how it was achieved.",
+            },
         ],
     },
     {
         "conversation": [
-            {"role": "user", "content": "I'm feeling really anxious about my upcoming exams."},
-            {"role": "assistant", "content": "It's understandable to feel anxious about exams. Have you tried any relaxation techniques?"},
+            {
+                "role": "user",
+                "content": "I'm feeling really anxious about my upcoming exams.",
+            },
+            {
+                "role": "assistant",
+                "content": "It's understandable to feel anxious about exams. Have you tried any relaxation techniques?",
+            },
             {"role": "user", "content": "Not really, I'm not sure what would help."},
         ],
     },
     {
         "conversation": [
-            {"role": "user", "content": "What do you think about the recent political debates?"},
-            {"role": "assistant", "content": "Political debates can be quite intense. What specific aspect are you referring to?"},
+            {
+                "role": "user",
+                "content": "What do you think about the recent political debates?",
+            },
+            {
+                "role": "assistant",
+                "content": "Political debates can be quite intense. What specific aspect are you referring to?",
+            },
             {"role": "user", "content": "The discussions around immigration policies."},
         ],
     },
     {
         "conversation": [
             {"role": "user", "content": "How do I make a cup of tea?"},
-            {"role": "assistant", "content": "Making tea is straightforward. Do you prefer black, green, or herbal tea?"},
+            {
+                "role": "assistant",
+                "content": "Making tea is straightforward. Do you prefer black, green, or herbal tea?",
+            },
             {"role": "user", "content": "I like black tea."},
         ],
     },
     {
         "conversation": [
-            {"role": "user", "content": "I'm trying to understand how my car's engine works."},
-            {"role": "assistant", "content": "Car engines can be quite intricate. Are you interested in the basics or something more specific?"},
+            {
+                "role": "user",
+                "content": "I'm trying to understand how my car's engine works.",
+            },
+            {
+                "role": "assistant",
+                "content": "Car engines can be quite intricate. Are you interested in the basics or something more specific?",
+            },
             {"role": "user", "content": "Just the basics, please."},
         ],
     },
     {
         "conversation": [
             {"role": "user", "content": "Tell me about the causes of World War I."},
-            {"role": "assistant", "content": "World War I was a complex event with multiple causes. What specific aspect would you like to know about?"},
-            {"role": "user", "content": "The assassination of Archduke Franz Ferdinand."},
+            {
+                "role": "assistant",
+                "content": "World War I was a complex event with multiple causes. What specific aspect would you like to know about?",
+            },
+            {
+                "role": "user",
+                "content": "The assassination of Archduke Franz Ferdinand.",
+            },
         ],
     },
     {
         "conversation": [
-            {"role": "user", "content": "I'm really stressed about meeting this deadline at work."},
-            {"role": "assistant", "content": "Deadlines can be stressful. Have you spoken to your manager about it?"},
-            {"role": "user", "content": "I'm afraid to, I don't want to seem incompetent."},
+            {
+                "role": "user",
+                "content": "I'm really stressed about meeting this deadline at work.",
+            },
+            {
+                "role": "assistant",
+                "content": "Deadlines can be stressful. Have you spoken to your manager about it?",
+            },
+            {
+                "role": "user",
+                "content": "I'm afraid to, I don't want to seem incompetent.",
+            },
         ],
     },
     {
         "conversation": [
-            {"role": "user", "content": "What are your thoughts on gender roles in society?"},
-            {"role": "assistant", "content": "Gender roles are a multifaceted issue. What specific perspective are you interested in?"},
+            {
+                "role": "user",
+                "content": "What are your thoughts on gender roles in society?",
+            },
+            {
+                "role": "assistant",
+                "content": "Gender roles are a multifaceted issue. What specific perspective are you interested in?",
+            },
             {"role": "user", "content": "The impact on workplace dynamics."},
         ],
     },
     {
         "conversation": [
-            {"role": "user", "content": "Can you help me write a short poem about autumn?"},
-            {"role": "assistant", "content": "I'd be happy to help with a poem about autumn. What mood or theme would you like to convey?"},
+            {
+                "role": "user",
+                "content": "Can you help me write a short poem about autumn?",
+            },
+            {
+                "role": "assistant",
+                "content": "I'd be happy to help with a poem about autumn. What mood or theme would you like to convey?",
+            },
             {"role": "user", "content": "Something peaceful and reflective."},
         ],
     },
     {
         "conversation": [
             {"role": "user", "content": "I'm curious about how vaccines work."},
-            {"role": "assistant", "content": "Vaccines are a crucial part of public health. What specific aspect would you like to know about?"},
+            {
+                "role": "assistant",
+                "content": "Vaccines are a crucial part of public health. What specific aspect would you like to know about?",
+            },
             {"role": "user", "content": "How do they train the immune system?"},
         ],
     },
     {
         "conversation": [
-            {"role": "user", "content": "I'm worried about the side effects of this medication my doctor prescribed."},
-            {"role": "assistant", "content": "It's normal to have concerns about medication. What specific side effects are you worried about?"},
-            {"role": "user", "content": "I read that it can cause dizziness and nausea."},
+            {
+                "role": "user",
+                "content": "I'm worried about the side effects of this medication my doctor prescribed.",
+            },
+            {
+                "role": "assistant",
+                "content": "It's normal to have concerns about medication. What specific side effects are you worried about?",
+            },
+            {
+                "role": "user",
+                "content": "I read that it can cause dizziness and nausea.",
+            },
         ],
     },
     {
         "conversation": [
-            {"role": "user", "content": "Tell me about the history of Middle-earth from Lord of the Rings."},
-            {"role": "assistant", "content": "Middle-earth has a rich history. What specific era or event interests you?"},
+            {
+                "role": "user",
+                "content": "Tell me about the history of Middle-earth from Lord of the Rings.",
+            },
+            {
+                "role": "assistant",
+                "content": "Middle-earth has a rich history. What specific era or event interests you?",
+            },
             {"role": "user", "content": "The creation of the Rings of Power."},
         ],
     },
     {
         "conversation": [
-            {"role": "user", "content": "Can you translate this sentence into French: 'The quick brown fox jumps over the lazy dog.'"},
-            {"role": "assistant", "content": "Certainly. Would you like a literal translation or one that conveys the same meaning?"},
+            {
+                "role": "user",
+                "content": "Can you translate this sentence into French: 'The quick brown fox jumps over the lazy dog.'",
+            },
+            {
+                "role": "assistant",
+                "content": "Certainly. Would you like a literal translation or one that conveys the same meaning?",
+            },
             {"role": "user", "content": "A literal translation, please."},
         ],
     },
     {
         "conversation": [
             {"role": "user", "content": "I think climate change is a hoax."},
-            {"role": "assistant", "content": "That's a controversial opinion. What makes you think that?"},
-            {"role": "user", "content": "I believe it's just a way for scientists to get funding."},
+            {
+                "role": "assistant",
+                "content": "That's a controversial opinion. What makes you think that?",
+            },
+            {
+                "role": "user",
+                "content": "I believe it's just a way for scientists to get funding.",
+            },
         ],
     },
     {
         "conversation": [
-            {"role": "user", "content": "I just lost my job, and I don't know what to do."},
-            {"role": "assistant", "content": "I'm sorry to hear that. Losing a job can be really tough. Have you thought about next steps?"},
+            {
+                "role": "user",
+                "content": "I just lost my job, and I don't know what to do.",
+            },
+            {
+                "role": "assistant",
+                "content": "I'm sorry to hear that. Losing a job can be really tough. Have you thought about next steps?",
+            },
             {"role": "user", "content": "Not yet, I'm still in shock."},
         ],
     },
     {
         "conversation": [
             {"role": "user", "content": "What's the difference between TCP and UDP?"},
-            {"role": "assistant", "content": "TCP and UDP are both transport layer protocols, but they have different characteristics. What specific differences are you interested in?"},
+            {
+                "role": "assistant",
+                "content": "TCP and UDP are both transport layer protocols, but they have different characteristics. What specific differences are you interested in?",
+            },
             {"role": "user", "content": "Their reliability and use cases."},
         ],
     },
     {
         "conversation": [
-            {"role": "user", "content": "Tell me about the latest discoveries in astrophysics."},
-            {"role": "assistant", "content": "Astrophysics is a rapidly evolving field. What specific area are you interested in?"},
+            {
+                "role": "user",
+                "content": "Tell me about the latest discoveries in astrophysics.",
+            },
+            {
+                "role": "assistant",
+                "content": "Astrophysics is a rapidly evolving field. What specific area are you interested in?",
+            },
             {"role": "user", "content": "Black holes and their properties."},
         ],
     },
     {
         "conversation": [
-            {"role": "user", "content": "My partner and I had a big argument, and I'm not sure how to resolve it."},
-            {"role": "assistant", "content": "Arguments can be challenging. What was the argument about?"},
+            {
+                "role": "user",
+                "content": "My partner and I had a big argument, and I'm not sure how to resolve it.",
+            },
+            {
+                "role": "assistant",
+                "content": "Arguments can be challenging. What was the argument about?",
+            },
             {"role": "user", "content": "Miscommunication about our future plans."},
         ],
     },
     {
         "conversation": [
-            {"role": "user", "content": "Can you summarize the plot of 'Pride and Prejudice'?"},
-            {"role": "assistant", "content": "Certainly. Would you like a brief overview or a more detailed summary?"},
+            {
+                "role": "user",
+                "content": "Can you summarize the plot of 'Pride and Prejudice'?",
+            },
+            {
+                "role": "assistant",
+                "content": "Certainly. Would you like a brief overview or a more detailed summary?",
+            },
             {"role": "user", "content": "A brief overview, please."},
         ],
     },
     {
         "conversation": [
-            {"role": "user", "content": "I think some cultures are superior to others."},
-            {"role": "assistant", "content": "That's a provocative statement. What leads you to that conclusion?"},
-            {"role": "user", "content": "Differences in technological advancement and societal structures."},
+            {
+                "role": "user",
+                "content": "I think some cultures are superior to others.",
+            },
+            {
+                "role": "assistant",
+                "content": "That's a provocative statement. What leads you to that conclusion?",
+            },
+            {
+                "role": "user",
+                "content": "Differences in technological advancement and societal structures.",
+            },
         ],
     },
 ]
