@@ -1,30 +1,23 @@
 models:
-#  - name: gpt-4.5-preview
-#    description: "GPT-4.5 Preview"
 #  - name: gpt-4o
 #    description: "GPT-4o"
-  - name: gpt-4o-mini
-    description: "GPT-4o Mini"
+  - name: openrouter/qwen/qwen3-14b
+    description: "Qwen 3 14B"
+    provider: openrouter
+  - name: openrouter/google/gemini-2.5-pro-preview
+    description: "Gemini Pro 2.5 Preview"
+    provider: openrouter
 #  - name: openrouter/deepseek/deepseek-r1:free
 #    description: "DeepSeek R1"
 #    provider: openrouter
 #  - name: openrouter/deepseek/deepseek-r1-distill-llama-70b:free
 #    description: "DeepSeek R1 Distill Llama 70B"
 #    provider: openrouter
-  - name: openrouter/meta-llama/llama-3.3-70b-instruct:free
-    description: "Llama 3.3 70B Instruct"
-    provider: openrouter
-#  - name: openrouter/meta-llama/llama-3.2-3b-instruct
-#    description: "Llama 3.2 3B Instruct"
+#  - name: openrouter/meta-llama/llama-3.3-70b-instruct:free
+#    description: "Llama 3.3 70B Instruct"
 #    provider: openrouter
-  - name: openrouter/google/gemini-2.0-flash-thinking-exp:free
-    description: "Gemini 2.0 Flash Thinking Experimental 01-21"
-    provider: openrouter
-  - name: openrouter/google/gemma-3-27b-it:free
-    description: "Gemma 3 27B"
-    provider: openrouter
-#  - name: google/gemini-2.0-pro-exp-02-05:free
-#    description: "Gemini Pro 2.0 Experimental"
+#  - name: openrouter/google/gemma-3-27b-it:free
+#    description: "Gemma 3 27B"
 #    provider: openrouter
 #  - name: openrouter/mistralai/mistral-7b-instruct-v0.1
 #    description: "Mistral 7B Instruct"
@@ -41,9 +34,6 @@ models:
 #  - name: ollama/qwen2.5:7b
 #    description: "Qwen2.5 7B"
 #    provider: ollama
-#  - name: ollama/qwen2.5:14b
-#    description: "Qwen2.5 14B"
-#    provider: ollama
 #  - name: ollama/deepseek-r1:1.5b
 #    description: "DeepSeek-R1-Distill-Qwen-1.5B"
 #    provider: ollama
@@ -52,9 +42,6 @@ models:
 #    provider: ollama
 #  - name: ollama/deepseek-r1:8b
 #    description: "DeepSeek-R1-Distill-Llama-8B"
-#    provider: ollama
-#  - name: ollama/deepseek-r1:14b
-#    description: "DeepSeek R1 14B"
 #    provider: ollama
 
 # Metrics configuration
@@ -103,6 +90,9 @@ metrics:
   - name: multistep_reasoning
     enabled: true
     description: "Evaluates ability to follow multi-step reasoning processes"
+  - name: instruction_following
+    enabled: true
+    description: "Evaluates ability to follow instructions"
   - name: summary_quality
     enabled: true
     description: "Evaluates quality of text summarization"
