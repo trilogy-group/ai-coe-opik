@@ -69,17 +69,61 @@ class CustomGEval(BaseMetric):
         Returns:
             ScoreResult object with score and reason
         """
-        # Build prompt with evaluation template
+        # Extract original question and context if available from kwargs
+        original_question = kwargs.get("question")
+        original_context = kwargs.get("context")
+
+        task_details_prompt_parts = []
+        if original_question:
+            task_details_prompt_parts.append(f"Original Question/Task:\n{original_question}")
+        if original_context:
+            task_details_prompt_parts.append(f"Original Context/Input Document:\n{original_context}")
+        
+        task_details_section = ""
+        if task_details_prompt_parts:
+            task_details_section = "\n\n".join(task_details_prompt_parts) + "\n\n"
+        else:
+            task_details_section = "Original Task/Question: [Not explicitly provided in this evaluation step, assess based on the candidate response and general criteria.]\n\n"
+
+        # Clearly demarcate the model's output that is being evaluated.
+        # This helps the LLM judge distinguish it from its own task.
+        candidate_response_block = (
+            f"<candidate_response_to_evaluate>\n"
+            f"{output}\n"
+            f"</candidate_response_to_evaluate>\n"
+        )
+
+        # Build prompt with evaluation template, passing the demarcated output
+        # Prepend the original task details to the candidate's response for the judge's review
+        full_input_for_judge = task_details_section + candidate_response_block
+
         llm_query = G_EVAL_QUERY_TEMPLATE.format(
             task_introduction=self.task_introduction,
             evaluation_criteria=self.evaluation_criteria,
             chain_of_thought=self.llm_chain_of_thought,
-            input=output,
+            input=full_input_for_judge,
         )
 
-        # Add a simple parsing instruction to make output parsing easier
-        instruction = "\nProvide your evaluation in a JSON object with 'score' (integer 0-5) and 'reason' keys. Ensure the score is scaled on a 0-5 range."
-        full_prompt = llm_query + instruction
+        # Make the instruction for the LLM judge very explicit about its role and output format.
+        # This directive is CRUCIAL for ensuring the judge distinguishes its own output requirements
+        # from the criteria used to evaluate the candidate_response_to_evaluate.
+        final_judge_output_directive = (
+            "\n\n"
+            "--- IMPORTANT: YOUR OUTPUT FORMAT AS EVALUATOR ---\n"
+            "You have now reviewed the task introduction, evaluation criteria, the AI's chain of thought for evaluation, and the candidate's response.\n"
+            "Your role is to provide an evaluation of the <candidate_response_to_evaluate> based *solely* on the 'evaluation_criteria' (e.g., quality of paraphrase, adherence to instructions like formality, etc.) that were provided earlier for assessing the candidate.\n"
+            "CRITICAL: The <candidate_response_to_evaluate> itself was NOT expected to be in JSON format, nor was it expected to produce a 'score' or 'reason', unless such instructions were explicitly part of its original 'Task Introduction' or 'Evaluation Criteria'. Do not penalize it for not being in JSON.\n"
+            "\n"
+            "NOW, YOU, THE EVALUATOR, MUST format YOUR OWN response as a single, compact JSON object containing exactly two keys:\n"
+            "1. 'score': An integer from 0 to 5 (inclusive).\n"
+            "2. 'reason': A string briefly explaining your 'score', based on your assessment of the <candidate_response_to_evaluate> against the original 'evaluation_criteria'.\n"
+            "\n"
+            "Example of YOUR (the evaluator's) correctly formatted output:\n"
+            '{"score": 3, "reason": "The candidate paraphrase was mostly formal but missed some nuances of the original text."}\n'
+            "\n"
+            "Your entire output MUST be only this JSON object. Do not add any text before or after it."
+        )
+        full_prompt = llm_query + final_judge_output_directive
 
         # Generate response without logprobs
         response = self._model.generate_string(input=full_prompt)
