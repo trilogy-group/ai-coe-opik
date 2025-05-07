@@ -12,6 +12,8 @@ pip install -r requirements.txt
 2. Create a `.env` file in the project root with your Opik API key:
 ```
 OPIK_API_KEY=your_api_key_here
+OPENAI_API_KEY=your_api_key_here
+OPENROUTER_API_KEY=your_api_key_here
 ```
 
 3. Configure models and metrics in `config.yaml`
