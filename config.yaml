@@ -4,9 +4,9 @@ models:
   - name: openrouter/qwen/qwen3-14b
     description: "Qwen 3 14B"
     provider: openrouter
-  - name: openrouter/google/gemini-2.5-pro-preview
-    description: "Gemini Pro 2.5 Preview"
-    provider: openrouter
+#  - name: openrouter/google/gemini-2.5-pro-preview
+#    description: "Gemini Pro 2.5 Preview"
+#    provider: openrouter
 #  - name: openrouter/deepseek/deepseek-r1:free
 #    description: "DeepSeek R1"
 #    provider: openrouter
@@ -90,9 +90,6 @@ metrics:
   - name: multistep_reasoning
     enabled: true
     description: "Evaluates ability to follow multi-step reasoning processes"
-  - name: instruction_following
-    enabled: true
-    description: "Evaluates ability to follow instructions"
   - name: summary_quality
     enabled: true
     description: "Evaluates quality of text summarization"
