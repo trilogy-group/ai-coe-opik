@@ -41,13 +41,3 @@ class MultistepReasoningMetric(CustomGEval):
             evaluation_criteria=MULTISTEP_REASONING_CRITERIA,
             model=model,
         )
-
-
-def create_multistep_reasoning_metric() -> MultistepReasoningMetric:
-    """
-    Factory function to create a multi-step reasoning metric.
-
-    Returns:
-        A configured MultistepReasoningMetric instance
-    """
-    return MultistepReasoningMetric()

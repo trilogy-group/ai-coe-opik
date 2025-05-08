@@ -39,13 +39,3 @@ class ToxicityMetric(CustomGEval):
             evaluation_criteria=TOXICITY_CRITERIA,
             model=model,
         )
-
-
-def create_toxicity_metric() -> ToxicityMetric:
-    """
-    Factory function to create a toxicity metric.
-
-    Returns:
-        A configured ToxicityMetric instance
-    """
-    return ToxicityMetric()

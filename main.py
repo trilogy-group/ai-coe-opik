@@ -32,24 +32,14 @@ from metrics.conciseness import ConcisenessMetric
 from metrics.format_compliance import FormatComplianceMetric
 from metrics.hallucination import CustomHallucination
 from metrics.answer_relevance import CustomAnswerRelevance
-from metrics.fluency import FluencyMetric, create_fluency_metric
-from metrics.toxicity import ToxicityMetric, create_toxicity_metric
-from metrics.reasoning import ReasoningMetric, create_reasoning_metric
-from metrics.factual_accuracy import (
-    FactualAccuracyMetric,
-    create_factual_accuracy_metric,
-)
-
-from metrics.summary_quality import SummaryQualityMetric, create_summary_quality_metric
-from metrics.technical_nuance import (
-    TechnicalNuanceMetric,
-    create_technical_nuance_metric,
-)
-from metrics.empathy import EmpathyMetric, create_empathy_metric
-from metrics.multistep_reasoning import (
-    MultistepReasoningMetric,
-    create_multistep_reasoning_metric,
-)
+from metrics.fluency import FluencyMetric
+from metrics.toxicity import ToxicityMetric
+from metrics.reasoning import ReasoningMetric
+from metrics.factual_accuracy import FactualAccuracyMetric
+from metrics.summary_quality import SummaryQualityMetric
+from metrics.technical_nuance import TechnicalNuanceMetric
+from metrics.empathy import EmpathyMetric
+from metrics.multistep_reasoning import MultistepReasoningMetric
 
 
 from prompts import get_prompts
@@ -692,6 +682,11 @@ def get_metrics_for_task(task_type, config, evaluator_model=None):
         if not metric_config.enabled:
             continue
 
+        if evaluator_model:
+            model = evaluator_model
+        else:
+            model = None
+
         # Instantiate metrics based on their name
         if metric_config.name == "conciseness":
             metrics.append(ConcisenessMetric())
@@ -700,73 +695,25 @@ def get_metrics_for_task(task_type, config, evaluator_model=None):
         elif metric_config.name == "format_compliance":
             metrics.append(FormatComplianceMetric())
         elif metric_config.name == "hallucination":
-            # LLM-based metric
-            if evaluator_model:
-                metrics.append(CustomHallucination(model=evaluator_model))
-            else:
-                metrics.append(CustomHallucination())
+            metrics.append(CustomHallucination(model=model))
         elif metric_config.name == "fluency":
-            # LLM-based metric
-            if evaluator_model:
-                metrics.append(FluencyMetric(model=evaluator_model))
-            else:
-                metrics.append(FluencyMetric())
+            metrics.append(FluencyMetric(model=model))
         elif metric_config.name == "toxicity":
-            # LLM-based metric
-            if evaluator_model:
-                metrics.append(ToxicityMetric(model=evaluator_model))
-            else:
-                metrics.append(ToxicityMetric())
+            metrics.append(ToxicityMetric(model=model))
         elif metric_config.name == "reasoning_quality":
-            # LLM-based metric
-            if evaluator_model:
-                metrics.append(ReasoningMetric(model=evaluator_model))
-            else:
-                metrics.append(ReasoningMetric())
+            metrics.append(ReasoningMetric(model=model))
         elif metric_config.name == "answer_relevance":
-            # LLM-based metric
-            if evaluator_model:
-                metrics.append(CustomAnswerRelevance(model=evaluator_model))
-            else:
-                metrics.append(CustomAnswerRelevance())
+            metrics.append(CustomAnswerRelevance(model=model))
         elif metric_config.name == "factual_accuracy":
-            # LLM-based metric for factual accuracy
-
-            if evaluator_model:
-                metrics.append(FactualAccuracyMetric(model=evaluator_model))
-            else:
-                metrics.append(FactualAccuracyMetric())
-
+            metrics.append(FactualAccuracyMetric(model=model))
         elif metric_config.name == "summary_quality":
-            # LLM-based metric for summary quality
-
-            if evaluator_model:
-                metrics.append(SummaryQualityMetric(model=evaluator_model))
-            else:
-                metrics.append(SummaryQualityMetric())
+            metrics.append(SummaryQualityMetric(model=model))
         elif metric_config.name == "technical_nuance":
-            # LLM-based metric for technical nuance
-
-            if evaluator_model:
-                metrics.append(TechnicalNuanceMetric(model=evaluator_model))
-            else:
-                metrics.append(TechnicalNuanceMetric())
-
+            metrics.append(TechnicalNuanceMetric(model=model))
         elif metric_config.name == "empathy":
-            # LLM-based metric for empathy
-
-            if evaluator_model:
-                metrics.append(EmpathyMetric(model=evaluator_model))
-            else:
-                metrics.append(EmpathyMetric())
-
+            metrics.append(EmpathyMetric(model=model))
         elif metric_config.name == "multistep_reasoning":
-            # LLM-based metric for multistep reasoning
-
-            if evaluator_model:
-                metrics.append(MultistepReasoningMetric(model=evaluator_model))
-            else:
-                metrics.append(MultistepReasoningMetric())
+            metrics.append(MultistepReasoningMetric(model=model))
 
     return metrics
 

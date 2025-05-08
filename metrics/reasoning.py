@@ -39,13 +39,3 @@ class ReasoningMetric(CustomGEval):
             evaluation_criteria=REASONING_CRITERIA,
             model=model,
         )
-
-
-def create_reasoning_metric() -> ReasoningMetric:
-    """
-    Factory function to create a reasoning quality metric.
-
-    Returns:
-        A configured ReasoningMetric instance
-    """
-    return ReasoningMetric()

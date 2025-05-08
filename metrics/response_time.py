@@ -96,13 +96,3 @@ class ResponseTimeMetric(BaseMetric):
             value=minutes,
             reason=f"Response time: {minutes:.4f} minutes",
         )
-
-
-def create_response_time_metric() -> ResponseTimeMetric:
-    """
-    Factory function to create a response time metric.
-
-    Returns:
-        A configured ResponseTimeMetric instance
-    """
-    return ResponseTimeMetric()

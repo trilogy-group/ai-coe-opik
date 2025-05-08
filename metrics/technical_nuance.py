@@ -39,13 +39,3 @@ class TechnicalNuanceMetric(CustomGEval):
             evaluation_criteria=TECHNICAL_NUANCE_CRITERIA,
             model=model,
         )
-
-
-def create_technical_nuance_metric() -> TechnicalNuanceMetric:
-    """
-    Factory function to create a technical nuance metric.
-
-    Returns:
-        A configured TechnicalNuanceMetric instance
-    """
-    return TechnicalNuanceMetric()

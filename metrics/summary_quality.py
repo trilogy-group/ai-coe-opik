@@ -154,13 +154,3 @@ class SummaryQualityMetric(CustomGEval):
                 reason=f"Error parsing response: {str(e)}",
                 scoring_failed=True,
             )
-
-
-def create_summary_quality_metric() -> SummaryQualityMetric:
-    """
-    Factory function to create a summary quality metric.
-
-    Returns:
-        A configured SummaryQualityMetric instance
-    """
-    return SummaryQualityMetric()
